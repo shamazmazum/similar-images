@@ -20,7 +20,7 @@
   (let ((similar
          (find-similar
           (asdf:system-relative-pathname :similar-images/tests "tests/pictures/")
-          60)))
+          :threshold 60)))
     (is (= (length similar) 1))
     (is-true
      (similar-images::set-equal-p

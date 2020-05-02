@@ -3,4 +3,5 @@
   (:export #:find-similar
            #:similar-subset
            #:*threshold*
-           #:*remove-errored*))
+           #:*remove-errored*
+           #:*resursive*))

@@ -3,6 +3,9 @@
 (defparameter *remove-errored* nil
   "Remove an image if the error occured during reading")
 
+(defparameter *recursive* t
+  "Do recursive scan for images if T")
+
 (defun handle-condition (c)
   (declare (ignore c))
   (if *remove-errored*
@@ -26,7 +29,8 @@
                  (mapc
                   (lambda (file-or-directory)
                     (cond
-                      ((directory-pathname-p file-or-directory)
+                      ((and *recursive*
+                            (directory-pathname-p file-or-directory))
                        (collect-files% file-or-directory))
                       ((imagep file-or-directory)
                        (push file-or-directory files))))

@@ -28,13 +28,22 @@ the images are considered similar.")
      collect (mapcar #'car close) into result
      finally (return (remove-duplicates result :test #'set-equal-p))))
 
-(defun find-similar (directory &optional (threshold *threshold*))
-  "Return a list of sets of similar images for images in @c(directory)
-and its subdirectories. All images in a set (which is a list itself)
-are considered similar."
+(defun find-similar (directory
+                     &key
+                       (threshold *threshold*)
+                       (recursive *recursive*)
+                       (remove-errored *remove-errored*))
+  "Return a list of sets of similar images for images in
+@c(directory). If @c(recursive) is @c(T), all subdirectories of
+@c(directory) are also scanned for images. If @c(remove-errored) is
+@c(T) the pictures which cannot be read are removed. @c(Threshold) is
+a sensitivity of algorithm. The bigger the value is the more different
+pictures are considered similar."
   (declare (type (or string pathname) directory)
            (type unsigned-byte threshold))
-  (let ((*threshold* threshold))
+  (let ((*threshold* threshold)
+        (*recursive* recursive)
+        (*remove-errored* remove-errored))
     (collect-close (collect-hashes directory))))
     
 ;; O(N^2) case for reference
@@ -58,20 +67,31 @@ are considered similar."
         collect close)
      :test #'set-equal-p)))
 
-(defun similar-subset (little big &optional (threshold *threshold*))
+(defun similar-subset (little big
+                       &key
+                         (threshold *threshold*)
+                         (recursive *recursive*)
+                         (remove-errored *remove-errored*))
   "Find images in the directory @c(little) which are similar to one or
 more images in the directory @c(big). For every match a list of
 similar images is constructed where the first image belongs to
 @c(little) and the rest belong to @c(big). A list of all matches is
-returned."
+returned. If @c(recursive) is @c(T), all subdirectories of
+@c(directory) are also scanned for images. If @c(remove-errored) is
+@c(T) the pictures which cannot be read are removed. @c(Threshold) is
+a sensitivity of algorithm. The bigger the value is the more different
+pictures are considered similar."
   (declare (type (or pathname string) little big))
-  (loop
-     with little-hashes = (collect-hashes little)
-     with big = (collect-hashes big)
-     with tree = (make-vp-tree big #'hamming-distance :key #'cdr)
-     for image-and-hash in little-hashes
-     for close = (search-close tree image-and-hash
-                               threshold #'hamming-distance
-                               :key #'cdr)
-     when close
-     collect (mapcar #'car (cons image-and-hash close))))
+  (let ((*threshold* threshold)
+        (*recursive* recursive)
+        (*remove-errored* remove-errored))
+    (loop
+       with little-hashes = (collect-hashes little)
+       with big-hashes = (collect-hashes big)
+       with tree = (make-vp-tree big-hashes #'hamming-distance :key #'cdr)
+       for image-and-hash in little-hashes
+       for close = (search-close tree image-and-hash
+                                 *threshold* #'hamming-distance
+                                 :key #'cdr)
+       when close
+       collect (mapcar #'car (cons image-and-hash close)))))
