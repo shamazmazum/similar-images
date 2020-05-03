@@ -15,18 +15,15 @@ calculate perceptional hashes but don't provide any storage for them."))
                    :initform (error "Specify base directory")
                    :accessor db-base-directory
                    :type     (or pathname string))
-   (handle         :accessor db-handle)
-   (to-insert      :accessor db-to-insert
-                   :initform nil
-                   :type     list))
+   (handle         :accessor db-handle))
   (:documentation "SQLite backend for hashes database"))
 
 (defgeneric hash (database image)
   (:documentation "Return hash for an image @c(image)"))
 
-(defgeneric sync-db (database)
-  (:documentation "Synchronize database with on-disk data")
-  (:method ((database hash-database))
+(defgeneric insert-new (database images-and-hashes)
+  (:documentation "Insert new images and hashes in the database")
+  (:method ((database hash-database) images-and-hashes)
     t))
 
 (defgeneric close-db (database)
@@ -41,5 +38,4 @@ database when control leaves @c(body)."
   `(let ((,database ,init-form))
      (unwind-protect
           (progn ,@body)
-       (sync-db ,database)
        (close-db ,database))))

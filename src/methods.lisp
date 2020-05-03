@@ -33,16 +33,20 @@
 (defmethod close-db ((database sqlite-database))
   (disconnect (db-handle database)))
 
-(defmethod sync-db ((database sqlite-database))
-  (let ((handle (db-handle database)))
+(defmethod insert-new ((database sqlite-database) images-and-hashes)
+  (let ((handle (db-handle database))
+        (base-directory (db-base-directory database)))
     (with-transaction handle
-      (mapc (lambda (image-and-hash)
-              (execute-non-query
-               handle "insert into hashes (name, hash) values (?, ?);"
-               (car image-and-hash)
-               (cdr image-and-hash)))
-            (db-to-insert database))))
-  (setf (db-to-insert database) nil))
+      (mapc
+       (lambda (image-and-hash)
+         (execute-non-query
+          handle
+          "insert or ignore into hashes (name, hash) values (?, ?);"
+          (enough-namestring
+           (car image-and-hash)
+           base-directory)
+          (cdr image-and-hash)))
+       images-and-hashes))))
 
 (defmethod hash ((database sqlite-database) image)
   (declare (type (or pathname string) image))
@@ -55,8 +59,4 @@
 
     (if db-hash
         (coerce db-hash 'bit-vector)
-        (let ((hash (call-next-method)))
-          (if hash
-              (push (cons relative-path hash)
-                    (db-to-insert database)))
-          hash))))
+        (call-next-method))))

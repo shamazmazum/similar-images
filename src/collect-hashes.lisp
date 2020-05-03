@@ -46,10 +46,12 @@
 its subdirectories"
   (with-database (db (make-instance 'sqlite-database
                                     :base-directory directory))
-    (handler-bind
-        ;; FIXME: does imago have its own conditions?
-        ((jpeg-turbo:jpeg-error #'handle-condition))
-      (loop
-         for image in (collect-images directory)
-         for hash = (hash db image)
-         when hash collect (cons image hash)))))
+    (insert-new
+     db
+     (handler-bind
+         ;; FIXME: does imago have its own conditions?
+         ((jpeg-turbo:jpeg-error #'handle-condition))
+       (loop
+          for image in (collect-images directory)
+          for hash = (hash db image)
+          when hash collect (cons image hash))))))
