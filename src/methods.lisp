@@ -4,14 +4,16 @@
 (defmethod hash ((database dummy-database) image)
   (declare (type (or string pathname) image)
            (ignore database))
-  (restart-case (ahash image)
-    (continue ()
-      :report "Skip this image and continue"
-      (values))
-    (remove-file ()
-      :report "Remove this image"
-      (delete-file image)
-      (values))))
+  (pcall
+   (lambda ()
+     (restart-case (ahash image)
+       (continue ()
+         :report "Skip this image and continue"
+         (values))
+       (remove-file ()
+         :report "Remove this image"
+         (delete-file image)
+         (values))))))
 
 ;; SQLite database
 (defmethod initialize-instance :after ((database sqlite-database) &rest args)

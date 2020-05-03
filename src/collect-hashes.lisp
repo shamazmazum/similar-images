@@ -52,6 +52,12 @@ its subdirectories"
          ;; FIXME: does imago have its own conditions?
          ((jpeg-turbo:jpeg-error #'handle-condition))
        (loop
-          for image in (collect-images directory)
-          for hash = (hash db image)
-          when hash collect (cons image hash))))))
+          with images = (collect-images directory)
+          with hashes = (mapcar
+                         (lambda (image) (hash db image))
+                         images)
+          for image in images
+          for hash-or-future in hashes
+          for hash = (touch hash-or-future)
+          when hash
+          collect (cons image hash))))))

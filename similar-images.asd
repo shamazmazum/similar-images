@@ -17,7 +17,7 @@
                        (symbol-function
                         (intern (symbol-name '#:run-tests)
                                 (find-package :similar-images-tests)))))
-    :depends-on (:cl-fad :perceptual-hashes :vp-trees :sqlite))
+    :depends-on (:cl-fad :perceptual-hashes :vp-trees :sqlite :eager-future2))
 
 (defsystem :similar-images/tests
   :name :similar-images/tests

@@ -49,6 +49,6 @@ directory) so only hashes to the new files are calculated.
 
 ## TODO
 
-* Some progress report
-* Multithreading
+* Some progress report.
+* Multithreading (done with the help of `eager-future2`).
 * Timestamps for database entries.
