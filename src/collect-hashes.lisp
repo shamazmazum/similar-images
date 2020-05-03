@@ -6,6 +6,9 @@
 (defparameter *recursive* t
   "Do recursive scan for images if T")
 
+(defparameter *image-types* '("jpg" "jpeg" "png")
+  "Image file extensions")
+
 (defun handle-condition (c)
   (declare (ignore c))
   (if *remove-errored*
@@ -14,11 +17,11 @@
 
 (defun imagep (pathname)
   "T if pathname designates an image, NIL otherwise"
-  (let ((type (pathname-type (pathname pathname))))
-    (or
-     (string= type "jpeg")
-     (string= type "jpg")
-     (string= type "png"))))
+  (declare (type (or pathname string) pathname))
+  (if (find (pathname-type (pathname pathname))
+            *image-types*
+            :test #'string=)
+      pathname))
 
 (defun collect-images (directory)
   "Return a list of images in the @c(directory) and its subdirectories"

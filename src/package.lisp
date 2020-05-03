@@ -4,4 +4,5 @@
            #:similar-subset
            #:*threshold*
            #:*remove-errored*
-           #:*resursive*))
+           #:*resursive*
+           #:*image-types*))
