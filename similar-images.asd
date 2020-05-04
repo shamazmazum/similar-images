@@ -27,3 +27,13 @@
   :components ((:file "tests/package")
                (:file "tests/tests" :depends-on ("tests/package")))
   :depends-on (:similar-images :fiveam))
+
+(defsystem :similar-images/misc
+    :name :similar-images/misc
+    :version "0.1"
+    :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
+    :license "2-clause BSD"
+    :serial t
+    :components ((:file "misc/package")
+                 (:file "misc/filters"))
+  :depends-on (:similar-images))
