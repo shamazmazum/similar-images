@@ -19,10 +19,21 @@
 (test test-find-similar
   (let ((similar
          (find-similar
-          (asdf:system-relative-pathname :similar-images/tests "tests/pictures/")
+          (asdf:system-relative-pathname :similar-images/tests "tests/set1")
           :threshold 60)))
     (is (= (length similar) 1))
     (is-true
      (similar-images::set-equal-p
       (mapcar #'get-filename (first similar))
       '(#p"vincent2.jpg" #p"vincent2-watermark.jpg")))))
+
+(test test-similar-subset
+  (let ((similar
+         (similar-subset
+          (asdf:system-relative-pathname :similar-images/tests "tests/set2")
+          (asdf:system-relative-pathname :similar-images/tests "tests/set1")
+          :threshold 60)))
+    (is (= (length similar) 1))
+    (is (equalp
+         (mapcar #'get-filename (first similar))
+         '(#p"sailor-moon.jpg" #p"sailor-moon.jpg")))))
