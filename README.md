@@ -17,6 +17,10 @@ images are considered similar. When this value exceeds `4096` all the
 images are considered similar. The default value is good enough to
 find images with just tiny differences.
 
+**Good news:** Since 12-05-2020 there is a new `find-similar-prob`
+function which does all the same as `find-similar` but much much
+faster!
+
 Another good function is `similar-subset` which allows to compare a
 small set of images with a bigger one and find images in the small set
 which have similar pictures in the big one. Usage:

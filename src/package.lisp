@@ -6,6 +6,7 @@
         #:sqlite
         #:eager-future2)
   (:export #:find-similar
+           #:find-similar-prob
            #:similar-subset
            #:*threshold*
            #:*remove-errored*
