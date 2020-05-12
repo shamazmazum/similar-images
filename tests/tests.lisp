@@ -17,6 +17,9 @@
 
 (in-suite similar-images)
 (test test-find-similar
+  ;; KLUDGE: Set a new random state. Needed for travis.
+  (setq *random-state* (make-random-state t))
+
   (mapc
    (lambda (func)
      (let ((similar
