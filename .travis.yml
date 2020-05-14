@@ -19,8 +19,6 @@ install:
 before_script:
   - mkdir lisp
   - pushd lisp
-  - git clone --depth 1 git://github.com/shamazmazum/imago.git
-  - git clone --depth 1 git://github.com/shamazmazum/vp-trees.git
   - git clone --depth 1 git://github.com/shamazmazum/perceptual-hashes.git
   - popd
 
