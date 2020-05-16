@@ -1,4 +1,4 @@
-(in-package :similar-images-misc)
+(in-package :similar-images-viewer)
 
 (defun prepare-tree-view (tree-view)
   (let* ((renderer (gtk-cell-renderer-text-new))
@@ -40,7 +40,7 @@
      status
      (format nil "~dx~d~%" image-width image-height))))
 
-(defun view-similar (similar)
+(defun view (similar)
   (within-main-loop
     (let ((window (make-instance 'gtk-window
                                  :type :toplevel

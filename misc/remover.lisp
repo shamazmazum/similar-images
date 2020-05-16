@@ -1,4 +1,4 @@
-(in-package :similar-images-misc)
+(in-package :similar-images-remover)
 
 (defun get-dimensions-jpeg (image)
   (declare (type (or string pathname) image))
