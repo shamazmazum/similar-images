@@ -51,6 +51,28 @@ n)`. This is much faster than a naïve `O(n^2)` search. Also all
 computed hashes are backed to SQLite database (`hashes.db` in your
 directory) so only hashes to the new files are calculated.
 
+## Miscellaneous packages
+
+There are two miscellaneous packages in `similar-images/misc`
+system. The first is `similar-images-remover` which holds
+`remove-similar` function. It accepts a list of matches returned from
+`find-similar` (or `find-similar-prob`) and removes all images but one
+from all matches. The remaining image is chosen with `best-criterion`
+optional argument. By default the image with the largest area is not
+removed. An example: deduplicate images in a directory:
+~~~~
+(asdf:load-system :similar-images/misc)
+(similar-images-remover:remove-similar
+  (similar-images:find-similar-prob "~/my-images/"))
+~~~~
+
+You can also review similar images in GTK application (it's ugly ;):
+~~~~
+(asdf:load-system :similar-images/misc)
+(similar-images-viewer:view
+  (similar-images:find-similar-prob "~/my-images/"))
+~~~~
+
 ## TODO
 
 * Some progress report.
