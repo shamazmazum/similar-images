@@ -73,6 +73,11 @@ You can also review similar images in GTK application (it's ugly ;):
   (similar-images:find-similar-prob "~/my-images/"))
 ~~~~
 
+Control keys:
+* `Right arrow` — expand match
+* `Left arrow` — collapse match
+* `Delete` — delete an image
+
 ## TODO
 
 * Some progress report.
