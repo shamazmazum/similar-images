@@ -21,24 +21,25 @@
                (gtk-tree-store-append model parent)
                (namestring file))))))
 
-#+nil
-(defun set-image (image pixbuf status)
-  (let ((widget-width (gtk-widget-get-allocated-width image))
-        (image-height (gdk-pixbuf:gdk-pixbuf-get-height pixbuf))
-        (image-width (gdk-pixbuf:gdk-pixbuf-get-width pixbuf)))
-
-    (gtk-image-set-from-pixbuf
-     image
-     (if (<= image-width widget-width)
-         (gdk-pixbuf:gdk-pixbuf-copy pixbuf)
-         (gdk-pixbuf:gdk-pixbuf-scale-simple
-          pixbuf
-          widget-width
-          (floor (* image-height widget-width) image-width)
-          :nearest)))
-    (gtk-label-set-text
-     status
-     (format nil "~dx~d~%" image-width image-height))))
+(defun set-image (image pixbuf)
+  (if pixbuf
+      (let* ((widget-width  (gtk-widget-get-allocated-width image))
+             (widget-height (gtk-widget-get-allocated-height image))
+             (image-height (gdk-pixbuf:gdk-pixbuf-get-height pixbuf))
+             (image-width  (gdk-pixbuf:gdk-pixbuf-get-width pixbuf))
+             (scale-x (/ image-width widget-width))
+             (scale-y (/ image-height widget-height))
+             (scale (max scale-x scale-y)))
+        (gtk-image-set-from-pixbuf
+         image
+         (if (< scale 1)
+             (gdk-pixbuf:gdk-pixbuf-copy pixbuf)
+             (gdk-pixbuf:gdk-pixbuf-scale-simple
+              pixbuf
+              (floor image-width scale)
+              (floor image-height scale)
+              :nearest))))
+      (gtk:gtk-image-clear image)))
 
 (defun view (similar)
   (within-main-loop
@@ -56,7 +57,8 @@
           (box (make-instance 'gtk-box :orientation :vertical))
           (scrolled-window (make-instance 'gtk-scrolled-window))
           (scrolled-window2 (make-instance 'gtk-scrolled-window))
-          (image (make-instance 'gtk-image)))
+          (image (make-instance 'gtk-image))
+          current-pixbuf)
 
       (prepare-tree-view tree-view)
       (add-entries tree-view similar)
@@ -67,43 +69,34 @@
          (declare (ignore widget))
          (leave-gtk-main)))
 
-      #+nil
-      (gobject:g-signal-connect
-       tree-view1 "cursor-changed"
-       (lambda (widget)
-         (declare (ignore widget))
-         (let ((iter (gtk-tree-selection-get-selected
-                      (gtk-tree-view-get-selection tree-view1))))
-           (when iter
-             (add-entries
-              tree-view2
-              (nth  
-               (first
-                (gtk-tree-path-get-indices
-                 (gtk-tree-model-get-path
-                  (gtk-tree-view-get-model tree-view1)
-                  iter)))
-               similar))))))
-
       (gobject:g-signal-connect
        tree-view "cursor-changed"
        (lambda (widget)
          (declare (ignore widget))
          (let ((iter (gtk-tree-selection-get-selected
                       (gtk-tree-view-get-selection tree-view))))
-           (if iter
-               (let ((filename 
-                      (gtk-tree-model-get-value
-                       (gtk-tree-view-get-model tree-view)
-                       iter 0)))
-                 (when (probe-file filename)
-                   (gtk-image-set-from-file image filename)
-                   (let ((pixbuf (gtk-image-pixbuf image)))
-                     (gtk-label-set-text
-                      status
-                      (format nil "~dx~d"
-                              (gdk-pixbuf:gdk-pixbuf-width pixbuf)
-                              (gdk-pixbuf:gdk-pixbuf-height pixbuf))))))))))
+           (when iter
+             (let ((filename
+                    (gtk-tree-model-get-value
+                     (gtk-tree-view-get-model tree-view)
+                     iter 0)))
+               (cond
+                 ((probe-file filename)
+                  (setq current-pixbuf (gdk-pixbuf:gdk-pixbuf-new-from-file filename))
+                  (gtk-label-set-text
+                   status
+                   (format nil "~dx~d"
+                           (gdk-pixbuf:gdk-pixbuf-width  current-pixbuf)
+                           (gdk-pixbuf:gdk-pixbuf-height current-pixbuf))))
+                 (t
+                  (setq current-pixbuf nil)))
+               (set-image image current-pixbuf))))))
+
+      (gobject:g-signal-connect
+       image "size-allocate"
+       (lambda (widget allocation)
+         (declare (ignore widget allocation))
+         (set-image image current-pixbuf)))
 
       (gobject:g-signal-connect
        tree-view "key-press-event"
