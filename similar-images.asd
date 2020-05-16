@@ -36,5 +36,6 @@
     :license "2-clause BSD"
     :serial t
     :components ((:file "misc/package")
-                 (:file "misc/filters"))
-  :depends-on (:similar-images))
+                 (:file "misc/filters")
+                 (:file "misc/viewer"))
+  :depends-on (:similar-images :cl-cffi-gtk))

@@ -4,4 +4,5 @@
         #:imago
         #:jpeg-turbo)
   (:export #:get-biggest-image
-           #:remove-similar))
+           #:remove-similar
+           #:view-similar))

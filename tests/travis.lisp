@@ -21,6 +21,9 @@
   (error 'not-implemented :proc (list 'quit code)))
 
 (defun do-all()
+  ;; Check if similar-images/misc is buildable
+  (ql:quickload :similar-images/misc)
+
   (ql:quickload :similar-images/tests)
   (portable-quit
    (if (funcall
