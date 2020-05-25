@@ -15,8 +15,8 @@
      (image-height image))))
 
 (defparameter *dimension-getters*
-  '(("jpg"  . #'get-dimensions-jpeg)
-    ("jpeg" . #'get-dimensions-jpeg))
+  `(("jpg"  . ,#'get-dimensions-jpeg)
+    ("jpeg" . ,#'get-dimensions-jpeg))
   "Functions which return dimensions based on the image's type")
 
 (defun get-dimensions (image)
@@ -24,7 +24,8 @@
 decompression is avoided when possible"
   (declare (type (or string pathname) image))
   (let* ((type (pathname-type (pathname image)))
-         (getter (or (car (assoc type *dimension-getters*))
+         (getter (or (cdr (assoc type *dimension-getters*
+                                 :test #'string=))
                      #'get-dimensions-rest)))
     (funcall getter image)))
 
@@ -41,8 +42,13 @@ decompression is avoided when possible"
 
 (defun remove-similar (images &key (best-criterion
                                     #'get-biggest-image))
+  "Remove similar images. This function takes matches returned by
+@c(find-similar) or @(find-similar-prob) and removes all images with
+exception of one from all matches. Remaining images are chosen by
+@c(best-criterion) function."
   (loop
      for group in images
-     for best = (funcall best-criterion group)
-     for rest = (remove best group :test #'equal)
+     for existing = (remove-if-not #'probe-file group)
+     for best = (funcall best-criterion existing)
+     for rest = (remove best existing :test #'equal)
      collect (mapc #'delete-file rest)))
