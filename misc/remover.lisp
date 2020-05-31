@@ -46,9 +46,12 @@ decompression is avoided when possible"
 @c(find-similar) or @(find-similar-prob) and removes all images with
 exception of one from all matches. Remaining images are chosen by
 @c(best-criterion) function."
-  (loop
-     for group in images
-     for existing = (remove-if-not #'probe-file group)
-     for best = (funcall best-criterion existing)
-     for rest = (remove best existing :test #'equal)
-     collect (mapc #'delete-file rest)))
+  (dolist (group images)
+    (let ((existing (remove-if-not #'probe-file group)))
+      (when existing
+        (let ((for-deletion
+               (remove
+                (funcall best-criterion existing)
+                existing :test #'equal)))
+          (mapc #'delete-file for-deletion)))))
+  t)
