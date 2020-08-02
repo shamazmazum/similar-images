@@ -9,6 +9,10 @@
 (defparameter *image-types* '("jpg" "jpeg" "png")
   "Image file extensions")
 
+(defparameter *use-sqlite* t
+  "Use SQLite database backend. NIL is only good for benchmarking
+perceptual-hashes.")
+
 (defun handle-condition (c)
   (declare (ignore c))
   (if *remove-errored*
@@ -44,7 +48,9 @@
 (defun collect-hashes (directory)
   "Return consed pathname and hash for images in the @c(directory) and
 its subdirectories"
-  (with-database (db (make-instance 'sqlite-database
+  (with-database (db (make-instance (if *use-sqlite*
+                                        'sqlite-database
+                                        'dummy-database)
                                     :base-directory directory))
     (insert-new
      db

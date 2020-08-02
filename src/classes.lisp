@@ -1,7 +1,11 @@
 (in-package :similar-images)
 
 (defclass hash-database ()
-  ()
+  ((base-directory :initarg       :base-directory
+                   :initform      (error "Specify base directory")
+                   :accessor      db-base-directory
+                   :type          (or pathname string)
+                   :documentation "Parent directory for all images"))
   (:documentation "Class for database of image hashes. Not to be
 instantiated."))
 
@@ -11,11 +15,7 @@ instantiated."))
 calculate perceptional hashes but don't provide any storage for them."))
 
 (defclass sqlite-database (dummy-database hash-database)
-  ((base-directory :initarg  :base-directory
-                   :initform (error "Specify base directory")
-                   :accessor db-base-directory
-                   :type     (or pathname string))
-   (handle         :accessor db-handle))
+  ((handle         :accessor db-handle))
   (:documentation "SQLite backend for hashes database"))
 
 (defgeneric hash (database image)
@@ -24,7 +24,7 @@ calculate perceptional hashes but don't provide any storage for them."))
 (defgeneric insert-new (database images-and-hashes)
   (:documentation "Insert new images and hashes in the database")
   (:method ((database hash-database) images-and-hashes)
-    t))
+    images-and-hashes))
 
 (defgeneric close-db (database)
   (:documentation "Close database")
