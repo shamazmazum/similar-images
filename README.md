@@ -78,6 +78,22 @@ Control keys:
 * `Left arrow` — collapse match
 * `Delete` — delete an image
 
+## Installation
+
+You can install **similar-images** from [Ultralisp](https://ultralisp.org/)
+repository. Add Ultralisp repository to quicklisp (if you haven't already):
+
+~~~~
+(ql-dist:install-dist "http://dist.ultralisp.org/"
+                      :prompt nil)
+~~~~
+
+and install **similar-images**:
+
+~~~~
+(ql:quickload :similar-images)
+~~~~
+
 ## TODO
 
 * Some progress report.
