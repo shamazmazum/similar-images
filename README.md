@@ -1,5 +1,5 @@
 # similar-images
-[![Build Status](https://travis-ci.com/shamazmazum/similar-images.svg?branch=master)](https://travis-ci.com/shamazmazum/similar-images)
+[![Build Status](https://api.cirrus-ci.com/github/shamazmazum/similar-images.svg)](https://cirrus-ci.com/github/shamazmazum/similar-images)
 
 **similar-images** is a small library which can find similar images in
 big datasets. Simply call `find-similar` function with the directory

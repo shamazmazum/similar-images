@@ -1,0 +1,15 @@
+freebsd_instance:
+  image_family: freebsd-13-0-snap
+
+task:
+  env:
+    matrix:
+      - LISP: sbcl
+      - LISP: ccl
+  preinstall_script:
+    - pkg install -y curl libjpeg-turbo gtk3
+  install_script:
+    - curl -L https://raw.githubusercontent.com/shamazmazum/cl-cirrus/master/install.sh | sh
+    - cl -e '(ql-dist:install-dist "http://dist.ultralisp.org/" :prompt nil)'
+  script:
+    - cl -f $CIRRUS_WORKING_DIR/tests/travis.lisp
