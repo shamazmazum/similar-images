@@ -6,24 +6,23 @@
 (defconstant +bin-width+ 11
   "A set of bins will have 2^+bin-width+ bins.")
 
-(defun make-random-gen (max)
+(defgenerator make-random-gen (max)
   "Make a generator of integer random numbers in the range [0, MAX]
 without repetitions. When all numbers are returned, this generator
 will return NIL."
-  (let ((list (loop for x below max collect x)))
-    (lambda ()
-      (if list
-          (let ((random (nth (random (length list))
-                             list)))
-            (setq list (delete random list))
-            random)))))
+  (loop
+     with list = (loop for x below max collect x)
+     while list
+     for random = (nth (random (length list)) list)
+     do
+       (setq list (delete random list))
+       (yield random)))
 
 (defun make-bin-classifier (n &optional (rnd (make-random-gen +hash-length+)))
   "Return bin classifier which designates a bit-vector to one of 2^N
 bins. RND is a random number generator."
-  (declare (type function rnd))
-  (let ((random-bit-indices (loop for x = (funcall rnd) repeat n
-                               collect x)))
+  (declare (type basic-generator rnd))
+  (let ((random-bit-indices (take n rnd)))
     (lambda (vector)
       (declare (type bit-vector vector))
       (loop

@@ -4,7 +4,11 @@
         #:vp-trees
         #:fad
         #:sqlite
-        #:eager-future2)
+        #:eager-future2
+        #:snakes)
+  (:shadowing-import-from
+   #:snakes
+   #:yield)
   (:export #:find-similar
            #:find-similar-prob
            #:similar-subset
