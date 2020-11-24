@@ -1,5 +1,6 @@
 (in-package :similar-images)
 
+(declaim (type fixnum *threshold*))
 (defparameter *threshold* 45
   "Sensivity of algorithm. The bigger this value is the more different
 images are considered similar. When the value is more than 4096 all

@@ -24,12 +24,13 @@ bins. RND is a random number generator."
   (declare (type basic-generator rnd))
   (let ((random-bit-indices (take n rnd)))
     (lambda (vector)
-      (declare (type bit-vector vector))
+      (declare (optimize (speed 3))
+               (type bit-vector vector))
       (loop
-         with acc = 0
+         with acc fixnum = 0
          for idx in random-bit-indices
          for bit = (bit vector idx)
-         do (setq acc (+ (ash acc 1) bit))
+         do (setq acc (logior (ash acc 1) bit))
          finally (return acc)))))
 
 (defun make-bins-and-classifiers (n m)
@@ -45,33 +46,43 @@ corresponding bin classifiers."
                         &key (key #'identity))
   "Put an ELEMENT to one bin of each bin set. Bin sets and classifiers
 are specified in BINS-AND-CLASSIFIERS argument."
-  (loop
-     for bin-and-classifier in bins-and-classifiers
-     for bin-idx = (funcall (car bin-and-classifier)
-                            (funcall key element))
-     do
-       (push element
-             (aref (cdr bin-and-classifier)
-                   bin-idx)))
+  (declare (optimize (speed 3))
+           (type function key))
+  (dolist (bin-and-classifier bins-and-classifiers)
+    (destructuring-bind (classifier . bin)
+        bin-and-classifier
+      (declare (type function classifier)
+               (type simple-vector bin))
+      (let ((bin-idx (funcall classifier
+                              (funcall key element))))
+        (push element (svref bin bin-idx)))))
   bins-and-classifiers)
 
 (defun find-close-prob (bins-and-classifiers element
                         &key (key #'identity))
   "Search bins for all elements which are close enough to ELEMENT."
+  (declare (optimize (speed 3))
+           (type function key))
   (let (similar)
-    (loop
-       for bin-and-classifier in bins-and-classifiers
-       for bin-idx = (funcall (car bin-and-classifier)
-                              (funcall key element))
-       do
-         (loop
-            for entry in (aref (cdr bin-and-classifier) bin-idx)
-            for distance = (hamming-distance
-                            (funcall key entry)
-                            (funcall key element))
-            when (and (not (eq entry element))
-                      (<= distance *threshold*))
-            do (pushnew entry similar)))
+    (dolist (bin-and-classifier bins-and-classifiers)
+      (destructuring-bind (classifier . bin)
+          bin-and-classifier
+        (declare (type function classifier)
+                 (type simple-vector bin))
+        (dolist (entry
+                  (let ((bin-idx
+                         (funcall classifier
+                                  (funcall key element))))
+                    (svref bin bin-idx)))
+          (let ((distance (hamming-distance
+                           (funcall key entry)
+                           (funcall key element))))
+            (declare (type fixnum distance))
+            (if (and (not (eq entry element))
+                     (<= distance *threshold*))
+                (pushnew entry similar
+                         :test #'equal
+                         :key  #'car))))))
     similar))
 
 (defun find-similar-prob (directory
