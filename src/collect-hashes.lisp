@@ -15,9 +15,10 @@ perceptual-hashes.")
 
 (defun handle-condition (c)
   (declare (ignore c))
-  (if *remove-errored*
-      (invoke-restart 'remove-file)
-      (continue)))
+  (invoke-restart
+   (if *remove-errored*
+       'remove-file
+       'skip-image)))
 
 (defun imagep (pathname)
   "T if pathname designates an image, NIL otherwise"
@@ -55,8 +56,8 @@ its subdirectories"
     (insert-new
      db
      (handler-bind
-         ;; FIXME: does imago have its own conditions?
-         ((jpeg-turbo:jpeg-error #'handle-condition))
+         (((or jpeg-turbo:jpeg-error imago:decode-error)
+           #'handle-condition))
        (loop
           with images = (collect-images directory)
           with hashes = (mapcar

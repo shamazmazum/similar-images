@@ -7,7 +7,7 @@
   (pcall
    (lambda ()
      (restart-case (ahash image)
-       (continue ()
+       (skip-image ()
          :report "Skip this image and continue"
          (values))
        (remove-file ()
