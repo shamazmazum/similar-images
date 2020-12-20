@@ -75,7 +75,8 @@
                                  :default-width 800
                                  :default-heigh 600))
           (paned (make-instance 'gtk-paned
-                                :orientation :horizontal))
+                                :orientation  :horizontal
+                                :position     150))
           (tree-view (make-instance 'gtk-tree-view
                                     :model (make-instance 'gtk-tree-store
                                                           :column-types '("gchararray"))))
