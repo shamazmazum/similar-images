@@ -14,7 +14,9 @@
        for parent = (gtk-tree-store-set
                      model
                      (gtk-tree-store-append model nil)
-                     (format nil "Match ~d" counter))
+                     (format nil "Match ~d (~d images)"
+                             counter
+                             (length section)))
        do
          (loop for file in section do
               (gtk-tree-store-set
