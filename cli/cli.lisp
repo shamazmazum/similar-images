@@ -22,6 +22,11 @@
    :description "Search for images recursively"
    :short #\r
    :long "recursive")
+  (:name :threads
+   :description "Number of threads"
+   :long "threads"
+   :meta-var "THREADS"
+   :arg-parser #'parse-integer)
   (:name :threshold
    :description "Sensitivity of the algorithm (0-1024). Lesser values
 mean lower sensibility. Good values to try are (40-60)."
@@ -43,24 +48,34 @@ mean lower sensibility. Good values to try are (40-60)."
                  :args "DIRECTORY")
   (uiop:quit 1))
 
+(defmacro with-lparallel-kernel (n-threads &body body)
+  `(let ((lparallel:*kernel* (lparallel:make-kernel ,n-threads)))
+     ,@body))
+
 (defun do-all-stuff (options arguments)
   (when (/= (length arguments) 1)
     (print-usage-and-quit))
-  (let ((mode    (getf options :mode :view))
-        (big-set (getf options :big-set))
-        (similar (find-similar-prob
-                  (first arguments)
-                  :threshold      (getf options :threshold 45)
-                  :recursive      (getf options :recursive)
-                  :remove-errored (getf options :remove-errored)
-                  :reporter   (if (getf options :quiet)
-                                  (make-instance 'dummy-reporter)
-                                  (make-instance 'cli-reporter)))))
-    (declare (ignore big-set))
-    (case mode
-      (:print (format t "~a~%" similar))
-      (:view (view similar))
-      (:remove (remove-similar similar)))))
+  (let* ((big-set (getf options :big-set))
+         (set (first arguments))
+         (key-args (list :threshold      (getf options :threshold 45)
+                         :recursive      (getf options :recursive)
+                         :remove-errored (getf options :remove-errored)
+                         :reporter   (if (getf options :quiet)
+                                         (make-instance 'dummy-reporter)
+                                         (make-instance 'cli-reporter))))
+         (similar (with-lparallel-kernel (getf options :threads 4)
+                    (if big-set
+                        (apply #'similar-subset set big-set key-args)
+                        (apply #'find-similar-prob set key-args)))))
+
+    (case (getf options :mode :view)
+      (:print
+       (format t "~a~%" similar))
+      (:view
+       (view similar)
+       (gtk:join-gtk-main))
+      (:remove
+       (remove-similar similar)))))
 
 (defun main ()
   (handler-bind

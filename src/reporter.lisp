@@ -31,30 +31,21 @@ percents. COMPLETION is a float or rational number from 0 to 1."))
 
 ;; CLI reporter
 (defclass cli-reporter (reporter)
-  ((no-new-line :initform nil
-                :type boolean
-                :accessor no-new-line))
+  ((last-reported :initform nil
+                  :accessor last-reported))
   (:documentation "Reporter for CLI tool"))
 
 (defmethod report-state ((reporter cli-reporter) state)
-  (when (no-new-line reporter)
-    (setf (no-new-line reporter) nil)
-    (terpri))
   (format t "~a~%" state))
 
-;; FIXME: works only in VT100 compatible terminals
-(defun clear-line ()
-  (cond
-    ((interactive-stream-p *standard-output*)
-     (format t "~c[1K~c"
-             #\Esc #\Return))
-    (t (terpri))))
-
 (defmethod report-percentage ((reporter cli-reporter) completion)
-  (setf (no-new-line reporter) t)
-  (clear-line)
-  (format t "~4f% complete"
-          (float completion)))
+  (with-accessors ((last-reported last-reported))
+      reporter
+    (let ((completion (* 100 (float completion))))
+      (when (or (not last-reported)
+                (> (- completion last-reported) 5.0))
+        (setf last-reported completion)
+        (format t "~4f%~%" completion)))))
 
 (defparameter *reporter* (make-instance 'dummy-reporter)
   "Default reporter")
