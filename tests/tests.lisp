@@ -2,12 +2,13 @@
 (def-suite similar-images :description "Test similar-images")
 
 (defun run-tests ()
-  (every #'identity
-         (mapcar (lambda (suite)
-                   (let ((status (run suite)))
-                     (explain! status)
-                     (results-status status)))
-                 '(similar-images))))
+  (let ((lparallel:*kernel* (lparallel:make-kernel 2)))
+    (every #'identity
+           (mapcar (lambda (suite)
+                     (let ((status (run suite)))
+                       (explain! status)
+                       (results-status status)))
+                   '(similar-images)))))
 
 (defun get-filename (pathname)
   (declare (type pathname pathname))
