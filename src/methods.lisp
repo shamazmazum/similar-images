@@ -4,7 +4,7 @@
 (defmethod hash ((database dummy-database) image)
   (declare (type (or string pathname) image)
            (ignore database))
-  (pexec
+  (future
     (restart-case (ahash image)
       (skip-image ()
         :report "Skip this image and continue"

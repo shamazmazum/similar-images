@@ -47,6 +47,9 @@ perceptual-hashes.")
         (collect-files% directory))
       files)))
 
+;; Workaround for task-handler-error
+(deftype image-error () '(or imago:decode-error jpeg-turbo:jpeg-error))
+
 (defun collect-hashes (directory)
   "Return consed pathname and hash for images in the @c(directory) and
 its subdirectories"
@@ -56,9 +59,8 @@ its subdirectories"
                                     :base-directory directory))
     (insert-new
      db
-     (handler-bind
-         (((or jpeg-turbo:jpeg-error imago:decode-error)
-           #'handle-condition))
+     (task-handler-bind
+         ((image-error #'handle-condition))
        (loop
          with images = (report-state-after "Collecting hashes"
                          (collect-images directory))
@@ -68,7 +70,7 @@ its subdirectories"
          for image in images
          for counter from 0 by 1
          for hash-or-future in hashes
-         for hash = (touch hash-or-future)
+         for hash = (force hash-or-future)
          when hash
            collect
            (report-percentage%

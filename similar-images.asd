@@ -21,7 +21,7 @@
                :perceptual-hashes
                :vp-trees
                :sqlite
-               :eager-future2
+               :lparallel
                :snakes))
 
 (defsystem :similar-images/tests
