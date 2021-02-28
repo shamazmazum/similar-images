@@ -17,4 +17,8 @@
            #:*remove-errored*
            #:*resursive*
            #:*image-types*
-           #:*use-sqlite*))
+           #:*use-sqlite*
+           #:*reporter*
+
+           #:dummy-reporter
+           #:cli-reporter))

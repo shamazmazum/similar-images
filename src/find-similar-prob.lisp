@@ -89,7 +89,8 @@ are specified in BINS-AND-CLASSIFIERS argument."
                           &key
                             (threshold *threshold*)
                             (recursive *recursive*)
-                            (remove-errored *remove-errored*))
+                            (remove-errored *remove-errored*)
+                            (reporter *reporter*))
   "Return a list of sets of similar images for images in
 @c(directory). If @c(recursive) is @c(T), all subdirectories of
 @c(directory) are also scanned for images. If @c(remove-errored) is
@@ -105,8 +106,10 @@ similar."
            (type unsigned-byte threshold))
   (let ((*threshold* threshold)
         (*recursive* recursive)
-        (*remove-errored* remove-errored))
-    (let ((images-and-hashes (collect-hashes directory))
+        (*remove-errored* remove-errored)
+        (*reporter* reporter))
+    (let ((images-and-hashes (report-state-after "Searching for similar images"
+                               (collect-hashes directory)))
           (bins (make-bins-and-classifiers +number-of-bins+
                                            +bin-width+)))
       (mapc

@@ -30,21 +30,22 @@ perceptual-hashes.")
 
 (defun collect-images (directory)
   "Return a list of images in the @c(directory) and its subdirectories"
-  (let (files)
-    (labels ((collect-files% (directory)
-               (let ((files-and-directories
-                      (list-directory (pathname-as-directory directory))))
-                 (mapc
-                  (lambda (file-or-directory)
-                    (cond
-                      ((and *recursive*
-                            (directory-pathname-p file-or-directory))
-                       (collect-files% file-or-directory))
-                      ((imagep file-or-directory)
-                       (push file-or-directory files))))
-                  files-and-directories))))
-      (collect-files% directory))
-    files))
+  (report-state-before "Collecting images"
+    (let (files)
+      (labels ((collect-files% (directory)
+                 (let ((files-and-directories
+                         (list-directory (pathname-as-directory directory))))
+                   (mapc
+                    (lambda (file-or-directory)
+                      (cond
+                        ((and *recursive*
+                              (directory-pathname-p file-or-directory))
+                         (collect-files% file-or-directory))
+                        ((imagep file-or-directory)
+                         (push file-or-directory files))))
+                    files-and-directories))))
+        (collect-files% directory))
+      files)))
 
 (defun collect-hashes (directory)
   "Return consed pathname and hash for images in the @c(directory) and
@@ -59,12 +60,17 @@ its subdirectories"
          (((or jpeg-turbo:jpeg-error imago:decode-error)
            #'handle-condition))
        (loop
-          with images = (collect-images directory)
-          with hashes = (mapcar
-                         (lambda (image) (hash db image))
-                         images)
-          for image in images
-          for hash-or-future in hashes
-          for hash = (touch hash-or-future)
-          when hash
-          collect (cons image hash))))))
+         with images = (report-state-after "Collecting hashes"
+                         (collect-images directory))
+         with hashes = (mapcar
+                        (lambda (image) (hash db image))
+                        images)
+         for image in images
+         for counter from 0 by 1
+         for hash-or-future in hashes
+         for hash = (touch hash-or-future)
+         when hash
+           collect
+           (report-percentage%
+               (/ counter (length images))
+             (cons image hash)))))))

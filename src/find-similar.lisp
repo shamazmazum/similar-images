@@ -19,21 +19,25 @@ the images are considered similar.")
 
 (defun collect-close (images-and-hashes)
   "Return a list of sets of close enough images"
-  (loop
-     with tree = (build-tree images-and-hashes)
-     for image-and-hash in images-and-hashes
-     for close = (search-close tree image-and-hash
-                               *threshold* #'hamming-distance
-                               :key #'cdr)
-     when (> (length close) 1)
-     collect (mapcar #'car close) into result
-     finally (return (remove-duplicates result :test #'set-equal-p))))
+  (report-state-before "Searching for similar images"
+    (loop
+      with tree = (build-tree images-and-hashes)
+      for image-and-hash in images-and-hashes
+      for close = (search-close tree image-and-hash
+                                *threshold* #'hamming-distance
+                                :key #'cdr)
+      when (> (length close) 1)
+        collect (mapcar #'car close) into result
+      finally (return (remove-duplicates
+                       result
+                       :test #'set-equal-p)))))
 
 (defun find-similar (directory
                      &key
                        (threshold *threshold*)
                        (recursive *recursive*)
-                       (remove-errored *remove-errored*))
+                       (remove-errored *remove-errored*)
+                       (reporter *reporter*))
   "Return a list of sets of similar images for images in
 @c(directory). If @c(recursive) is @c(T), all subdirectories of
 @c(directory) are also scanned for images. If @c(remove-errored) is
@@ -44,7 +48,8 @@ pictures are considered similar."
            (type unsigned-byte threshold))
   (let ((*threshold* threshold)
         (*recursive* recursive)
-        (*remove-errored* remove-errored))
+        (*remove-errored* remove-errored)
+        (*reporter* reporter))
     (collect-close (collect-hashes directory))))
     
 ;; O(N^2) case for reference
@@ -72,7 +77,8 @@ pictures are considered similar."
                        &key
                          (threshold *threshold*)
                          (recursive *recursive*)
-                         (remove-errored *remove-errored*))
+                         (remove-errored *remove-errored*)
+                         (reporter *reporter*))
   "Find images in the directory @c(little) which are similar to one or
 more images in the directory @c(big). For every match a list of
 similar images is constructed where the first image belongs to
@@ -85,11 +91,13 @@ pictures are considered similar."
   (declare (type (or pathname string) little big))
   (let ((*threshold* threshold)
         (*recursive* recursive)
-        (*remove-errored* remove-errored))
+        (*remove-errored* remove-errored)
+        (*reporter* reporter))
     (loop
        with little-hashes = (collect-hashes little)
        with big-hashes = (collect-hashes big)
-       with tree = (make-vp-tree big-hashes #'hamming-distance :key #'cdr)
+       with tree = (report-state-before "Searching for similar images"
+                     (make-vp-tree big-hashes #'hamming-distance :key #'cdr))
        for image-and-hash in little-hashes
        for close = (search-close tree image-and-hash
                                  *threshold* #'hamming-distance
