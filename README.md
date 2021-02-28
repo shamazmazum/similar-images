@@ -17,7 +17,7 @@ This will scan the directory and its subdirectories for images and
 return sets of similar images (if any) in a list. There are some
 keyword arguments, the most important of them is `threshold` which is
 a small integer value. The bigger this value is the more different
-images are considered similar. When this value exceeds `4096` all the
+images are considered similar. When this value exceeds `1024` all the
 images are considered similar. The default value is good enough to
 find images with just tiny differences.
 
