@@ -7,6 +7,9 @@ big datasets. Simply call `find-similar` function with the directory
 which contains your images as its single argument:
 
 ~~~~
+;; Set lparallel kernel with 4 workers
+(setq lparallel:*kernel* (lparallel:make-kernel 4))
+
 (find-similar "/path/to/my/pictures")
 ~~~~
 
@@ -95,8 +98,18 @@ and install **similar-images**:
 (ql:quickload :similar-images)
 ~~~~
 
+## CLI tool
+
+You can run the following command to get command line interface tool for search
+for similar images:
+~~~~
+(asdf:make :similar-images/cli)
+~~~~
+
+Run this tool in the terminal without any arguments to get little help.
+
 ## TODO
 
-* Some progress report.
-* Multithreading (done with the help of `eager-future2`).
+* Some progress report (done in CLI tool).
+* Multithreading (done with the help of `lparallel`).
 * Timestamps for database entries.
