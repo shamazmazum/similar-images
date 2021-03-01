@@ -35,22 +35,18 @@ mean lower sensibility. Good values to try are (40-60)."
    :meta-var "THRESHOLD"
    :arg-parser #'parse-integer)
   (:name :remove-errored
-   :description "Remove files which cannot be read (dangerous!)"
+   :description "Remove images which cannot be read (dangerous!)"
    :long "remove-errored")
   (:name :big-set
    :description "Specify the big set to match against"
    :long "big-set"
-   :meta-var "DIRECTORY"
+   :meta-var "BIG-DIRECTORY"
    :arg-parser #'identity))
 
 (defun print-usage-and-quit ()
   (opts:describe :usage-of "similar-images"
                  :args "DIRECTORY")
   (uiop:quit 1))
-
-(defmacro with-lparallel-kernel (n-threads &body body)
-  `(let ((lparallel:*kernel* (lparallel:make-kernel ,n-threads)))
-     ,@body))
 
 (defun do-all-stuff (options arguments)
   (when (/= (length arguments) 1)
@@ -63,10 +59,10 @@ mean lower sensibility. Good values to try are (40-60)."
                          :reporter   (if (getf options :quiet)
                                          (make-instance 'dummy-reporter)
                                          (make-instance 'cli-reporter))))
-         (similar (with-lparallel-kernel (getf options :threads 4)
-                    (if big-set
-                        (apply #'similar-subset set big-set key-args)
-                        (apply #'find-similar-prob set key-args)))))
+         (lparallel:*kernel* (lparallel:make-kernel (getf options :threads 4)))
+         (similar (if big-set
+                      (apply #'similar-subset set big-set key-args)
+                      (apply #'find-similar-prob set key-args))))
 
     (case (getf options :mode :view)
       (:print
@@ -77,7 +73,15 @@ mean lower sensibility. Good values to try are (40-60)."
       (:remove
        (remove-similar similar)))))
 
+(defun set-signal-handlers ()
+  ;; Tried trivial-signal without success
+  ;; At least sbcl is covered
+  #+(and sbcl (not win32))
+  (sb-unix::enable-interrupt
+   sb-unix:sigint :default))
+
 (defun main ()
+  (set-signal-handlers)
   (handler-bind
       ((opts:troublesome-option
          (lambda (c)
