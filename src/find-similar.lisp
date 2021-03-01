@@ -35,6 +35,7 @@ the images are considered similar.")
 (defun find-similar (directory
                      &key
                        (threshold *threshold*)
+                       (hash-function *hash-function*)
                        (recursive *recursive*)
                        (remove-errored *remove-errored*)
                        (reporter *reporter*))
@@ -45,36 +46,18 @@ the images are considered similar.")
 a sensitivity of algorithm. The bigger the value is the more different
 pictures are considered similar."
   (declare (type (or string pathname) directory)
+           (type perceptual-hash hash-function)
            (type unsigned-byte threshold))
   (let ((*threshold* threshold)
+        (*hash-function* hash-function)
         (*recursive* recursive)
         (*remove-errored* remove-errored)
         (*reporter* reporter))
     (collect-close (collect-hashes directory))))
-    
-;; O(N^2) case for reference
-#+nil
-(defun find-similar (directory &optional (threshold *threshold*))
-  (declare (type (or string pathname) directory)
-           (type unsigned-byte threshold))
-  (let ((hashes (collect-hashes directory)))
-    (remove-duplicates
-     (loop
-        for hash1 in hashes
-        for close =
-          (loop
-             for hash2 in hashes
-             for dist = (hamming-distance
-                         (cdr hash1)
-                         (cdr hash2))
-             when (< dist threshold)
-             collect (cdr hash2))
-        when (> (length close) 1)
-        collect close)
-     :test #'set-equal-p)))
 
 (defun similar-subset (little big
                        &key
+                         (hash-function *hash-function*)
                          (threshold *threshold*)
                          (recursive *recursive*)
                          (remove-errored *remove-errored*)
@@ -88,8 +71,11 @@ returned. If @c(recursive) is @c(T), all subdirectories of
 @c(T) the pictures which cannot be read are removed. @c(Threshold) is
 a sensitivity of algorithm. The bigger the value is the more different
 pictures are considered similar."
-  (declare (type (or pathname string) little big))
+  (declare (type (or pathname string) little big)
+           (type unsigned-byte threshold)
+           (type perceptual-hash hash-function))
   (let ((*threshold* threshold)
+        (*hash-function* hash-function)
         (*recursive* recursive)
         (*remove-errored* remove-errored)
         (*reporter* reporter))

@@ -88,6 +88,7 @@ are specified in BINS-AND-CLASSIFIERS argument."
 (defun find-similar-prob (directory
                           &key
                             (threshold *threshold*)
+                            (hash-function *hash-function*)
                             (recursive *recursive*)
                             (remove-errored *remove-errored*)
                             (reporter *reporter*))
@@ -103,8 +104,10 @@ certain degree of probability, e.g. if a distance between images is
 45, there is about 2% chance that they will not be recognized as
 similar."
   (declare (type (or string pathname) directory)
+           (type perceptual-hash hash-function)
            (type unsigned-byte threshold))
   (let ((*threshold* threshold)
+        (*hash-function* hash-function)
         (*recursive* recursive)
         (*remove-errored* remove-errored)
         (*reporter* reporter))

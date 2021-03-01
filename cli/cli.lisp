@@ -34,6 +34,15 @@ mean lower sensibility. Good values to try are (40-60)."
    :long "threshold"
    :meta-var "THRESHOLD"
    :arg-parser #'parse-integer)
+  (:name :hash
+   :description "Hash function to use (can be ahash or dhash)"
+   :short #\h
+   :long "hash"
+   :meta-var "HASH"
+   :arg-parser (lambda (hash)
+                 (intern
+                  (string-upcase hash)
+                  (find-package :keyword))))
   (:name :remove-errored
    :description "Remove images which cannot be read (dangerous!)"
    :long "remove-errored")
@@ -56,6 +65,7 @@ mean lower sensibility. Good values to try are (40-60)."
          (key-args (list :threshold      (getf options :threshold 45)
                          :recursive      (getf options :recursive)
                          :remove-errored (getf options :remove-errored)
+                         :hash-function  (getf options :hash :ahash)
                          :reporter   (if (getf options :quiet)
                                          (make-instance 'dummy-reporter)
                                          (make-instance 'cli-reporter))))

@@ -13,6 +13,7 @@
            #:find-similar-prob
            #:similar-subset
 
+           #:*hash-function*
            #:*threshold*
            #:*remove-errored*
            #:*resursive*
