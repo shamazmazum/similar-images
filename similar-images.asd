@@ -8,6 +8,7 @@
   :serial t
   :components ((:file "package")
                (:file "reporter")
+               (:file "special")
                (:file "classes")
                (:file "methods")
                (:file "collect-hashes")

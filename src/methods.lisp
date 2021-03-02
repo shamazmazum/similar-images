@@ -1,11 +1,5 @@
 (in-package :similar-images)
 
-(deftype perceptual-hash () '(member :ahash :dhash))
-
-(declaim (type perceptual-hash *hash-function*))
-(defparameter *hash-function* :ahash
-  "Perceptual hash function to use by default (:ahash or :dhash)")
-
 ;; Dummy database
 (defmethod hash ((database dummy-database) image)
   (declare (type (or string pathname) image)

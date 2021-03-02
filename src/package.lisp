@@ -16,10 +16,11 @@
            #:*hash-function*
            #:*threshold*
            #:*remove-errored*
-           #:*resursive*
+           #:*recursive*
            #:*image-types*
            #:*use-sqlite*
            #:*reporter*
+           #:*workers*
 
            #:dummy-reporter
            #:cli-reporter))

@@ -47,9 +47,6 @@ percents. COMPLETION is a float or rational number from 0 to 1."))
         (setf last-reported completion)
         (format t "~4f%~%" completion)))))
 
-(defparameter *reporter* (make-instance 'dummy-reporter)
-  "Default reporter")
-
 ;; Helper macros
 (defmacro report-state-after (state &body body)
   "Execute a code and report the state after that"

@@ -1,11 +1,5 @@
 (in-package :similar-images)
 
-(declaim (type fixnum *threshold*))
-(defparameter *threshold* 45
-  "Sensivity of algorithm. The bigger this value is the more different
-images are considered similar. When the value is more than 4096 all
-the images are considered similar.")
-
 (defun build-tree (images-and-hashes)
   "Build VP-tree on a set of image hashes"
   (make-vp-tree images-and-hashes
@@ -32,37 +26,17 @@ the images are considered similar.")
                        result
                        :test #'set-equal-p)))))
 
-(defun find-similar (directory
-                     &key
-                       (threshold *threshold*)
-                       (hash-function *hash-function*)
-                       (recursive *recursive*)
-                       (remove-errored *remove-errored*)
-                       (reporter *reporter*))
+(define-search-function find-similar (directory)
   "Return a list of sets of similar images for images in
 @c(directory). If @c(recursive) is @c(T), all subdirectories of
 @c(directory) are also scanned for images. If @c(remove-errored) is
 @c(T) the pictures which cannot be read are removed. @c(Threshold) is
 a sensitivity of algorithm. The bigger the value is the more different
 pictures are considered similar."
-  (declare (type (or string pathname) directory)
-           (type perceptual-hash hash-function)
-           (type unsigned-byte threshold))
-  (let ((*threshold* threshold)
-        (*hash-function* hash-function)
-        (*recursive* recursive)
-        (*remove-errored* remove-errored)
-        (*reporter* reporter))
-    (collect-close (collect-hashes directory))))
+  (collect-close (collect-hashes directory)))
 
-(defun similar-subset (little big
-                       &key
-                         (hash-function *hash-function*)
-                         (threshold *threshold*)
-                         (recursive *recursive*)
-                         (remove-errored *remove-errored*)
-                         (reporter *reporter*))
-  "Find images in the directory @c(little) which are similar to one or
+(define-search-function similar-subset (little big)
+    "Find images in the directory @c(little) which are similar to one or
 more images in the directory @c(big). For every match a list of
 similar images is constructed where the first image belongs to
 @c(little) and the rest belong to @c(big). A list of all matches is
@@ -71,22 +45,14 @@ returned. If @c(recursive) is @c(T), all subdirectories of
 @c(T) the pictures which cannot be read are removed. @c(Threshold) is
 a sensitivity of algorithm. The bigger the value is the more different
 pictures are considered similar."
-  (declare (type (or pathname string) little big)
-           (type unsigned-byte threshold)
-           (type perceptual-hash hash-function))
-  (let ((*threshold* threshold)
-        (*hash-function* hash-function)
-        (*recursive* recursive)
-        (*remove-errored* remove-errored)
-        (*reporter* reporter))
-    (loop
-       with little-hashes = (collect-hashes little)
-       with big-hashes = (collect-hashes big)
-       with tree = (report-state-before "Searching for similar images"
-                     (make-vp-tree big-hashes #'hamming-distance :key #'cdr))
-       for image-and-hash in little-hashes
-       for close = (search-close tree image-and-hash
-                                 *threshold* #'hamming-distance
-                                 :key #'cdr)
-       when close
-       collect (mapcar #'car (cons image-and-hash close)))))
+  (loop
+    with little-hashes = (collect-hashes little)
+    with big-hashes = (collect-hashes big)
+    with tree = (report-state-before "Searching for similar images"
+                  (make-vp-tree big-hashes #'hamming-distance :key #'cdr))
+    for image-and-hash in little-hashes
+    for close = (search-close tree image-and-hash
+                              *threshold* #'hamming-distance
+                              :key #'cdr)
+    when close
+      collect (mapcar #'car (cons image-and-hash close))))

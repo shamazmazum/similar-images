@@ -1,18 +1,5 @@
 (in-package :similar-images)
 
-(defparameter *remove-errored* nil
-  "Remove an image if the error occured during reading")
-
-(defparameter *recursive* t
-  "Do recursive scan for images if T")
-
-(defparameter *image-types* '("jpg" "jpeg" "png")
-  "Image file extensions")
-
-(defparameter *use-sqlite* t
-  "Use SQLite database backend. NIL is only good for benchmarking
-perceptual-hashes.")
-
 (defun handle-condition (c)
   (declare (ignore c))
   (invoke-restart

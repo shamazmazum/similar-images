@@ -7,9 +7,6 @@ big datasets. Simply call `find-similar` function with the directory
 which contains your images as its single argument:
 
 ~~~~
-;; Set lparallel kernel with 4 workers
-(setq lparallel:*kernel* (lparallel:make-kernel 4))
-
 (find-similar "/path/to/my/pictures")
 ~~~~
 
