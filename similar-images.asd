@@ -56,7 +56,9 @@
   :serial t
   :components ((:file "package")
                (:file "cli"))
-  :depends-on (:similar-images/misc :unix-opts)
+  :depends-on (:similar-images/misc
+               :unix-opts
+               :split-sequence)
   :build-operation program-op
   :build-pathname "similar-images"
   :entry-point "similar-images-cli:main")

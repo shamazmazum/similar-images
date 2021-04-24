@@ -7,6 +7,10 @@
     ((string= mode "remove") :remove)
     (t (error "Wrong mode"))))
 
+(defun get-ignored-types (string)
+  (split-sequence:split-sequence
+   #\, string))
+
 (opts:define-opts
   (:name :mode
    :description "Mode of operation (view, print or remove)"
@@ -50,7 +54,12 @@ mean lower sensibility. Good values to try are (40-60)."
    :description "Specify the big set to match against"
    :long "big-set"
    :meta-var "BIG-DIRECTORY"
-   :arg-parser #'identity))
+   :arg-parser #'identity)
+  (:name :ignore-types
+   :long "ignore-types"
+   :description "List of image types to be ignored, separated by comma"
+   :meta-var "TYPES"
+   :arg-parser #'get-ignored-types))
 
 (defun print-usage-and-quit ()
   (opts:describe :usage-of "similar-images"
@@ -69,7 +78,10 @@ mean lower sensibility. Good values to try are (40-60)."
                          :workers        (getf options :threads        *workers*)
                          :reporter   (if (getf options :quiet)
                                          (make-instance 'dummy-reporter)
-                                         (make-instance 'cli-reporter))))
+                                         (make-instance 'cli-reporter))
+                         :image-types    (set-difference *image-types*
+                                                         (getf options :ignore-types)
+                                                         :test #'string=)))
          (similar (if big-set
                       (apply #'similar-subset set big-set key-args)
                       (apply #'find-similar-prob set key-args))))

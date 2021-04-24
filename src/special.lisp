@@ -34,6 +34,7 @@ the images are considered similar.")
   "Define search function which does all necessary bindings"
   `(defun ,name ,(append arguments
                   '(&key
+                    (image-types *image-types*)
                     (workers *workers*)
                     (threshold *threshold*)
                     (hash-function *hash-function*)
@@ -48,6 +49,7 @@ the images are considered similar.")
            (*recursive* recursive)
            (*remove-errored* remove-errored)
            (*reporter* reporter)
+           (*image-types* image-types)
            (lparallel:*kernel* (lparallel:make-kernel
                                 workers
                                 :bindings `((*standard-output* . ,*standard-output*)
