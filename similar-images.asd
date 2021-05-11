@@ -25,6 +25,40 @@
                :lparallel
                :snakes))
 
+(defsystem :similar-images/viewer
+  :name :similar-images/viewer
+  :version "0.1"
+  :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
+  :license "2-clause BSD"
+  :pathname "viewer/"
+  :serial t
+  :components ((:file "package")
+               (:file "viewer"))
+  :depends-on (:similar-images
+               :cl-cffi-gtk))
+
+(defsystem :similar-images/remover
+  :name :similar-images/remover
+  :version "0.1"
+  :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
+  :license "2-clause BSD"
+  :pathname "remover/"
+  :serial t
+  :components ((:file "package")
+               (:file "remover"))
+  :depends-on (:similar-images
+               :imago/pngload
+               :imago/jpeg-turbo))
+
+(defsystem :similar-images/misc
+  :name :similar-images/misc
+  :version "0.1"
+  :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
+  :license "2-clause BSD"
+  :depends-on (:similar-images
+               :similar-images/viewer
+               :similar-images/remover))
+
 (defsystem :similar-images/tests
   :name :similar-images/tests
   :version "0.1"
@@ -34,18 +68,6 @@
   :components ((:file "package")
                (:file "tests" :depends-on ("package")))
   :depends-on (:similar-images :fiveam))
-
-(defsystem :similar-images/misc
-  :name :similar-images/misc
-  :version "0.1"
-  :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
-  :license "2-clause BSD"
-  :pathname "misc/"
-  :serial t
-  :components ((:file "packages")
-               (:file "remover")
-               (:file "viewer"))
-  :depends-on (:similar-images :cl-cffi-gtk))
 
 (defsystem :similar-images/cli
   :name :similar-images/cli

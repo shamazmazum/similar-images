@@ -5,8 +5,3 @@
         #:jpeg-turbo)
   (:export #:get-biggest-image
            #:remove-similar))
-
-(defpackage similar-images-viewer
-  (:use #:cl
-        #:gtk)
-  (:export #:view))
