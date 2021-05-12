@@ -9,8 +9,7 @@
     (t (error "Wrong mode"))))
 
 (defun get-ignored-types (string)
-  (split-sequence:split-sequence
-   #\, string))
+  (rutils:split-sequence #\, string))
 
 (opts:define-opts
   (:name :mode
@@ -75,8 +74,8 @@ mean lower sensibility. Good values to try are (40-60)."
   (let* ((big-set (getf options :big-set))
          (set (first arguments))
          (key-args (list :threshold      (getf options :threshold      *threshold*)
-                         :recursive      (getf options :recursive      *recursive*)
-                         :remove-errored (getf options :remove-errored *remove-errored*)
+                         :recursive      (getf options :recursive      nil)
+                         :remove-errored (getf options :remove-errored nil)
                          :hash-function  (getf options :hash           *hash-function*)
                          :workers        (getf options :threads        *workers*)
                          :reporter   (if (getf options :quiet)

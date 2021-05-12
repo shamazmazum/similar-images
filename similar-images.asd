@@ -86,7 +86,7 @@
                (:file "cli"))
   :depends-on (:similar-images/misc
                :unix-opts
-               :split-sequence)
+               :rutils)
   :build-operation program-op
   :build-pathname "similar-images"
   :entry-point "similar-images-cli:main")
