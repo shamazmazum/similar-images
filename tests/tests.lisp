@@ -59,6 +59,6 @@
          (small-image (imago:resize big-image 300 100)))
     (imago:write-image small-image small-pathname)
     (find-similar set-directory)
-    (is (equalp
-         (remove-similar (find-similar set-directory))
-         (list small-pathname)))))
+    (let ((result (remove-similar (find-similar set-directory))))
+      (is (= (length result) 1))
+      (is (equal (first result) small-pathname)))))
