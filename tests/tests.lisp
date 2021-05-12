@@ -1,5 +1,8 @@
 (in-package :similar-images-tests)
-(def-suite similar-images :description "Test similar-images")
+(def-suite similar-images
+  :description "Test similar-images")
+(def-suite similar-images/remover
+  :description "Test similar-images/remover")
 
 (defun run-tests ()
   (every #'identity
@@ -7,7 +10,7 @@
                    (let ((status (run suite)))
                      (explain! status)
                      (results-status status)))
-                 '(similar-images))))
+                 '(similar-images similar-images/remover))))
 
 (defun get-filename (pathname)
   (declare (type pathname pathname))
@@ -16,6 +19,7 @@
     :name (pathname-name pathname)
     :type (pathname-type pathname))))
 
+;; Test similar-images
 (in-suite similar-images)
 (test test-find-similar
   (mapc
@@ -41,3 +45,20 @@
     (is (equalp
          (mapcar #'get-filename (first similar))
          '("sailor-moon.jpg" "sailor-moon.jpg")))))
+
+;; Test similar-images/remover
+(in-suite similar-images/remover)
+
+;; TODO: restore original file if it was accidentaly deleted
+(test remove-similar-images
+  (let* ((set-directory (asdf:system-relative-pathname
+                         :similar-images/tests "tests/set3/"))
+         (big-pathname   (merge-pathnames #p"test.jpg"  set-directory))
+         (small-pathname (merge-pathnames #p"test2.jpg" set-directory))
+         (big-image (imago:read-image big-pathname))
+         (small-image (imago:resize big-image 300 100)))
+    (imago:write-image small-image small-pathname)
+    (find-similar set-directory)
+    (is (equalp
+         (remove-similar (find-similar set-directory))
+         (list small-pathname)))))

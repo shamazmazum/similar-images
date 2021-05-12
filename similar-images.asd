@@ -47,6 +47,7 @@
   :components ((:file "package")
                (:file "remover"))
   :depends-on (:similar-images
+               :rutils
                :imago/pngload
                :imago/jpeg-turbo))
 
@@ -65,9 +66,12 @@
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
   :pathname "tests/"
+  :serial t
   :components ((:file "package")
-               (:file "tests" :depends-on ("package")))
-  :depends-on (:similar-images :fiveam))
+               (:file "tests"))
+  :depends-on (:similar-images
+               :similar-images/remover
+               :fiveam))
 
 (defsystem :similar-images/cli
   :name :similar-images/cli

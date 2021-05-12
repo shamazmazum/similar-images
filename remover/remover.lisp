@@ -23,35 +23,43 @@
   "Get a list containing dimensions of an image. The full
 decompression is avoided when possible"
   (declare (type (or string pathname) image))
-  (let* ((type (pathname-type (pathname image)))
-         (getter (or (cdr (assoc type *dimension-getters*
-                                 :test #'string=))
-                     #'get-dimensions-rest)))
-    (funcall getter image)))
+  (let ((type (pathname-type (pathname image))))
+    (funcall
+     (rutils:assoc1 type *dimension-getters*
+                    :test    #'string=
+                    :default #'get-dimensions-rest)
+     image)))
 
 (defun get-biggest-image (images)
   "Get biggest image in the list @c(images) judging by its area."
-  (reduce
-   (lambda (image1 image2)
-     (let ((dim1 (get-dimensions image1))
-           (dim2 (get-dimensions image2)))
-       (if (> (apply #'* dim1)
-              (apply #'* dim2))
-           image1 image2)))
-   images))
+  (flet ((area (image)
+           (apply #'* (get-dimensions image))))
+    (reduce (lambda (image1 image2)
+              (if (> (area image1)
+                     (area image2))
+                  image1 image2))
+            images)))
 
-(defun remove-similar (images &key (best-criterion
-                                    #'get-biggest-image))
+(defun remove-similar (images &key (best-criterion #'get-biggest-image) dry-run)
   "Remove similar images. This function takes matches returned by
 @c(find-similar) or @(find-similar-prob) and removes all images with
 exception of one from all matches. Remaining images are chosen by
-@c(best-criterion) function."
-  (dolist (group images)
-    (let ((existing (remove-if-not #'probe-file group)))
-      (when existing
-        (let ((for-deletion
-               (remove
-                (funcall best-criterion existing)
-                existing :test #'equal)))
-          (mapc #'delete-file for-deletion)))))
-  t)
+@c(best-criterion) function.
+
+The list of removed images is returned. If @c(dry-run) is @c(T), the
+images are not removed, and this function only produces a list of
+images which you may wish to remove."
+  (mapc
+   (if dry-run #'identity #'delete-file)
+   ;; There can be duplicates because one image can belong to multiple
+   ;; groups, i.e. ρ(x, y) < c and ρ(y, z) < c does not mean
+   ;; ρ(x, z) < c.
+   (remove-duplicates
+    (reduce
+     (lambda (for-deletion group)
+       (append (remove
+                (funcall best-criterion group)
+                group :test #'equal)
+               for-deletion))
+     images :initial-value nil)
+    :test #'equal)))
