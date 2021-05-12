@@ -2,6 +2,7 @@
 
 (defun get-mode (mode)
   (cond
+    #-similar-images-no-gui
     ((string= mode "view")   :view)
     ((string= mode "print")  :print)
     ((string= mode "remove") :remove)
@@ -13,7 +14,9 @@
 
 (opts:define-opts
   (:name :mode
-   :description "Mode of operation (view, print or remove)"
+   :description (format
+                 nil "Mode of operation (~{~a~^, ~})"
+                 '(#-similar-images-no-gui "view" "print" "remove"))
    :short #\m
    :long "mode"
    :meta-var "MODE"
@@ -89,6 +92,7 @@ mean lower sensibility. Good values to try are (40-60)."
     (case (getf options :mode :view)
       (:print
        (format t "~a~%" similar))
+      #-similar-images-no-gui
       (:view
        (view similar)
        (gtk:join-gtk-main))

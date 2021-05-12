@@ -25,6 +25,7 @@
                :lparallel
                :snakes))
 
+#-similar-images-no-gui
 (defsystem :similar-images/viewer
   :name :similar-images/viewer
   :version "0.1"
@@ -57,6 +58,7 @@
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
   :depends-on (:similar-images
+               #-similar-images-no-gui
                :similar-images/viewer
                :similar-images/remover))
 

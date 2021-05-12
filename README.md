@@ -114,7 +114,8 @@ for similar images:
 (asdf:make :similar-images/cli)
 ~~~~
 
-Usage:
+If you do not have GTK, add `:similar-images-no-gui` feature before
+building. Usage:
 
 ~~~~
 vasily@vonbraun:~/.quicklisp/local-projects/similar-images % ./cli/similar-images
