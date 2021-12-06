@@ -58,8 +58,3 @@ percents. COMPLETION is a float or rational number from 0 to 1."))
   `(progn
      (report-state *reporter* ,state)
      ,@body))
-
-(defmacro report-percentage% (completion &body body)
-  "Execute a code and report percentage"
-  `(prog1 (progn ,@body)
-     (report-percentage *reporter* ,completion)))

@@ -49,17 +49,17 @@ its subdirectories"
      (task-handler-bind
          ((image-error #'handle-condition))
        (loop
-         with images = (report-state-after "Collecting hashes"
-                         (collect-images directory))
-         with hashes = (mapcar
-                        (lambda (image) (hash db image))
-                        images)
-         for image in images
-         for counter from 0 by 1
-         for hash-or-future in hashes
-         for hash = (force hash-or-future)
-         when hash
-           collect
-           (report-percentage%
-               (/ counter (length images))
-             (cons image hash)))))))
+          with images = (report-state-after "Collecting hashes"
+                          (collect-images directory))
+          with hashes = (mapcar
+                         (lambda (image) (hash db image))
+                         images)
+          for image in images
+          for counter from 0 by 1
+          for hash-or-future in hashes
+          for hash = (force hash-or-future)
+          when hash collect
+            (cons image hash)
+          do
+            (report-percentage
+             *reporter*  (/ counter (length images))))))))
