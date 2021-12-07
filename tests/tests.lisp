@@ -5,12 +5,13 @@
   :description "Test similar-images/remover")
 
 (defun run-tests ()
-  (every #'identity
-         (mapcar (lambda (suite)
-                   (let ((status (run suite)))
-                     (explain! status)
-                     (results-status status)))
-                 '(similar-images similar-images/remover))))
+  (let ((*use-sqlite* nil))
+    (every #'identity
+           (mapcar (lambda (suite)
+                     (let ((status (run suite)))
+                       (explain! status)
+                       (results-status status)))
+                   '(similar-images similar-images/remover)))))
 
 (defun get-filename (pathname)
   (declare (type pathname pathname))
