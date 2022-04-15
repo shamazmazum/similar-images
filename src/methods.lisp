@@ -40,7 +40,7 @@
          db
          #.(concatenate
             'string
-            "create table if not exists hashes2 "
+            "create table if not exists hashes3 "
             "(name text not null, type text not null, hash blob not null, "
             "unique (name, type));")))
       (setf handle (connect db-pathname)))))
@@ -56,7 +56,7 @@
        (lambda (image-and-hash)
          (execute-non-query
           handle
-          "insert or ignore into hashes2 (name, type, hash) values (?, ?, ?);"
+          "insert or ignore into hashes3 (name, type, hash) values (?, ?, ?);"
           (enough-namestring
            (car image-and-hash)
            base-directory)
@@ -70,7 +70,7 @@
          (base-directory (db-base-directory database))
          (relative-path (enough-namestring image base-directory))
          (db-hash (execute-single
-                   handle "select hash from hashes2 where name = ? and type = ?"
+                   handle "select hash from hashes3 where name = ? and type = ?"
                    relative-path
                    (hash-name *hash-function*))))
     (if db-hash
