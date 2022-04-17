@@ -19,6 +19,7 @@
                     (declare (ignore op system))
                     (uiop:symbol-call :similar-images-tests '#:run-tests))
   :depends-on (:cl-fad
+               :log4cl
                :perceptual-hashes
                :vp-trees
                :sqlite

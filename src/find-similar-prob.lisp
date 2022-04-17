@@ -97,10 +97,10 @@ probabilistic which means that close images are found only with a
 certain degree of probability, e.g. if a distance between images is
 45, there is about 2% chance that they will not be recognized as
 similar."
-  (let ((images-and-hashes (report-state-after "Searching for similar images"
-                             (collect-hashes directory)))
+  (let ((images-and-hashes (collect-hashes directory))
         (bins (make-bins-and-classifiers +number-of-bins+
                                          +bin-width+)))
+    (log:info "Searching for similar images")
     (mapc
      (lambda (image-and-hash)
        (classify-vector bins image-and-hash :key #'cdr))

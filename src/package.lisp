@@ -19,8 +19,4 @@
            #:*recursive*
            #:*image-types*
            #:*use-sqlite*
-           #:*reporter*
-           #:*workers*
-
-           #:dummy-reporter
-           #:cli-reporter))
+           #:*workers*))

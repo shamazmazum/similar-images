@@ -7,6 +7,13 @@
        'remove-file
        'skip-image)))
 
+(defun report-warning (c)
+  (log:warn
+   "~a"
+   (with-output-to-string (out)
+     (princ c out)))
+  (muffle-warning c))
+
 (defun imagep (pathname)
   "T if pathname designates an image, NIL otherwise"
   (declare (type (or pathname string) pathname))
@@ -17,22 +24,22 @@
 
 (defun collect-images (directory)
   "Return a list of images in the @c(directory) and its subdirectories"
-  (report-state-before "Collecting images"
-    (let (files)
-      (labels ((collect-files% (directory)
-                 (let ((files-and-directories
-                         (list-directory (pathname-as-directory directory))))
-                   (mapc
-                    (lambda (file-or-directory)
-                      (cond
-                        ((and *recursive*
-                              (directory-pathname-p file-or-directory))
-                         (collect-files% file-or-directory))
-                        ((imagep file-or-directory)
-                         (push file-or-directory files))))
-                    files-and-directories))))
-        (collect-files% directory))
-      files)))
+  (log:info "Collecting images")
+  (let (files)
+    (labels ((collect-files% (directory)
+               (let ((files-and-directories
+                      (list-directory (pathname-as-directory directory))))
+                 (mapc
+                  (lambda (file-or-directory)
+                    (cond
+                      ((and *recursive*
+                            (directory-pathname-p file-or-directory))
+                       (collect-files% file-or-directory))
+                      ((imagep file-or-directory)
+                       (push file-or-directory files))))
+                  files-and-directories))))
+      (collect-files% directory))
+    files))
 
 ;; Workaround for task-handler-error
 (deftype image-error () '(or imago:decode-error jpeg-turbo:jpeg-error))
@@ -47,19 +54,20 @@ its subdirectories"
     (insert-new
      db
      (task-handler-bind
-         ((image-error #'handle-condition))
-       (loop
-          with images = (report-state-after "Collecting hashes"
-                          (collect-images directory))
-          with hashes = (mapcar
-                         (lambda (image) (hash db image))
-                         images)
-          for image in images
-          for counter from 0 by 1
-          for hash-or-future in hashes
-          for hash = (force hash-or-future)
-          when hash collect
-            (cons image hash)
-          do
-            (report-percentage
-             *reporter*  (/ counter (length images))))))))
+         ((image-error #'handle-condition)
+          (warning     #'report-warning))
+       (loop with progress-state = (make-progress-state)
+             with images = (prog1
+                               (collect-images directory)
+                             (log:info "Collecting hashes"))
+             with hashes = (mapcar
+                            (lambda (image) (hash db image))
+                            images)
+             for image in images
+             for counter from 0 by 1
+             for hash-or-future in hashes
+             for hash = (force hash-or-future)
+             when hash collect (cons image hash)
+             do
+             (report-percentage progress-state
+                                (/ counter (length images))))))))

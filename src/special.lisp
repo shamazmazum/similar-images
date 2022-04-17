@@ -1,8 +1,5 @@
 (in-package :similar-images)
 
-(defparameter *reporter* (make-instance 'dummy-reporter)
-  "Default reporter")
-
 (defparameter *remove-errored* nil
   "Remove an image if the error occured during reading")
 
@@ -39,8 +36,7 @@ the images are considered similar.")
                     (threshold *threshold*)
                     (hash-function *hash-function*)
                     (recursive *recursive*)
-                    (remove-errored *remove-errored*)
-                    (reporter *reporter*)))
+                    (remove-errored *remove-errored*)))
      ,doc
      (declare (type perceptual-hash hash-function)
               (type (integer 0 1024) threshold))
@@ -48,13 +44,12 @@ the images are considered similar.")
            (*hash-function* hash-function)
            (*recursive* recursive)
            (*remove-errored* remove-errored)
-           (*reporter* reporter)
            (*image-types* image-types)
            (lparallel:*kernel* (lparallel:make-kernel
                                 workers
                                 :bindings `((*standard-output* . ,*standard-output*)
-                                            (*error-output* . ,*error-output*)
-                                            (*hash-function* . ,hash-function)))))
+                                            (*error-output*    . ,*error-output*)
+                                            (*hash-function*   . ,hash-function)))))
        (unwind-protect
             ,@body
          (lparallel:end-kernel)))))

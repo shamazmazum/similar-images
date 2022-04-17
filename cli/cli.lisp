@@ -71,6 +71,9 @@ mean lower sensibility. Good values to try are (40-60)."
 (defun do-all-stuff (options arguments)
   (when (/= (length arguments) 1)
     (print-usage-and-quit))
+  (log:config
+   (if (getf options :quiet)
+       :warn :info))
   (let* ((big-set (getf options :big-set))
          (set (first arguments))
          (key-args (list :threshold      (getf options :threshold      *threshold*)
@@ -78,9 +81,6 @@ mean lower sensibility. Good values to try are (40-60)."
                          :remove-errored (getf options :remove-errored nil)
                          :hash-function  (getf options :hash           *hash-function*)
                          :workers        (getf options :threads        *workers*)
-                         :reporter   (if (getf options :quiet)
-                                         (make-instance 'dummy-reporter)
-                                         (make-instance 'cli-reporter))
                          :image-types    (set-difference *image-types*
                                                          (getf options :ignore-types)
                                                          :test #'string=)))
