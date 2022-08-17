@@ -22,52 +22,55 @@
             :test #'string=)
       pathname))
 
-(defun collect-images (directory)
-  "Return a list of images in the @c(directory) and its subdirectories"
-  (log:info "Collecting images")
-  (let (files)
-    (labels ((collect-files% (directory)
-               (let ((files-and-directories
-                      (list-directory (pathname-as-directory directory))))
-                 (mapc
-                  (lambda (file-or-directory)
-                    (cond
-                      ((and *recursive*
-                            (directory-pathname-p file-or-directory))
-                       (collect-files% file-or-directory))
-                      ((imagep file-or-directory)
-                       (push file-or-directory files))))
-                  files-and-directories))))
-      (collect-files% directory))
-    files))
+(defgenerator collect-images (directory)
+  "Return a generator generating images in the @c(directory) and, when
+*RECURSIVE* is T, its subdirectories."
+  (labels ((collect% (directory)
+           (let ((files-and-directories
+                  (list-directory (pathname-as-directory directory))))
+             (dolist (entry files-and-directories)
+               (cond
+                 ((and *recursive*
+                       (directory-pathname-p entry))
+                  (collect% entry))
+                 ((imagep entry)
+                  (yield entry)))))))
+    (collect% directory)))
 
 ;; Workaround for task-handler-error
 (deftype image-error () '(or imago:decode-error jpeg-turbo:jpeg-error))
 
+(defun fmap-cons (function cons)
+  (declare (type function function)
+           (optimize (speed 3)))
+  (cons (car cons)
+        (funcall function (cdr cons))))
+
 (defun collect-hashes (directory)
   "Return consed pathname and hash for images in the @c(directory) and
 its subdirectories"
-  (with-database (db (make-instance (if *use-sqlite*
-                                        'sqlite-database
-                                        'dummy-database)
-                                    :base-directory directory))
-    (insert-new
-     db
-     (task-handler-bind
-         ((image-error #'handle-condition)
-          (warning     #'report-warning))
-       (loop with progress-state = (make-progress-state)
-             with images = (prog1
-                               (collect-images directory)
-                             (log:info "Collecting hashes"))
-             with hashes = (mapcar
-                            (lambda (image) (hash db image))
-                            images)
-             for image in images
-             for counter from 0 by 1
-             for hash-or-future in hashes
-             for hash = (force hash-or-future)
-             when hash collect (cons image hash)
-             do
-             (report-percentage progress-state
-                                (/ counter (length images))))))))
+  (log:info "Collecting hashes")
+  (with-database (db (make-instance
+                      (if *use-sqlite*
+                          'sqlite-database
+                          'dummy-database)
+                      :base-directory directory))
+    (let ((progress-state (make-progress-state))
+          (future-generator (imap (lambda (image)
+                                    (cons image (hash db image)))
+                                  (collect-images directory))))
+      (reduce
+       #'nconc
+       (task-handler-bind
+           ((image-error #'handle-condition)
+            (warning     #'report-warning))
+         (loop for hash-futures = (take +process-at-once+
+                                        future-generator :fail-if-short nil)
+               while hash-futures collect
+               (insert-new db
+                           (loop for name-and-future in hash-futures
+                                 for name-and-hash = (fmap-cons #'force name-and-future)
+                                 when (cdr name-and-hash) collect name-and-hash))
+               do (report-processed
+                   progress-state
+                   (length hash-futures))))))))

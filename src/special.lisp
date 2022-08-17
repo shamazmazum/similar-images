@@ -1,5 +1,8 @@
 (in-package :similar-images)
 
+(defconstant +process-at-once+ 1500
+  "How many entries to write to the database at once.")
+
 (defparameter *remove-errored* nil
   "Remove an image if the error occured during reading")
 
