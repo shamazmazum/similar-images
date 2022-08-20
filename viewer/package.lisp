@@ -1,4 +1,3 @@
 (defpackage similar-images-viewer
-  (:use #:cl
-        #:gtk)
+  (:use #:cl)
   (:export #:view))
