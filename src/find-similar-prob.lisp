@@ -24,12 +24,11 @@ bins. RND is a random number generator."
   (declare (type basic-generator rnd))
   (let ((random-bit-indices (take n rnd)))
     (lambda (vector)
-      (declare (optimize (speed 3))
-               (type bit-vector vector))
+      (declare (optimize (speed 3)))
       (loop
          with acc fixnum = 0
          for idx in random-bit-indices
-         for bit = (bit vector idx)
+         for bit = (sbit vector idx)
          do (setq acc (logior (ash acc 1) bit))
          finally (return acc)))))
 
