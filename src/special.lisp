@@ -34,20 +34,22 @@ the images are considered similar.")
   "Define search function which does all necessary bindings"
   `(defun ,name ,(append arguments
                   '(&key
-                    (image-types *image-types*)
-                    (workers *workers*)
-                    (threshold *threshold*)
-                    (hash-function *hash-function*)
-                    (recursive *recursive*)
-                    (remove-errored *remove-errored*)))
+                    (image-types    *image-types*)
+                    (workers        *workers*)
+                    (threshold      *threshold*)
+                    (hash-function  *hash-function*)
+                    (recursive      *recursive*)
+                    (remove-errored *remove-errored*)
+                    (use-sqlite     *use-sqlite*)))
      ,doc
      (declare (type perceptual-hash hash-function)
               (type (integer 0 1024) threshold))
-     (let ((*threshold* threshold)
-           (*hash-function* hash-function)
-           (*recursive* recursive)
-           (*remove-errored* remove-errored)
-           (*image-types* image-types)
+     (let ((*threshold*        threshold)
+           (*hash-function*    hash-function)
+           (*recursive*        recursive)
+           (*remove-errored*   remove-errored)
+           (*image-types*      image-types)
+           (*use-sqlite*       use-sqlite)
            (lparallel:*kernel* (lparallel:make-kernel
                                 workers
                                 :bindings `((*standard-output* . ,*standard-output*)

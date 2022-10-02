@@ -28,6 +28,9 @@
    :description "Search for images recursively"
    :short #\r
    :long "recursive")
+  (:name :no-db
+   :description "Do not use hash database"
+   :long "no-db")
   (:name :threads
    :description "Number of threads"
    :long "threads"
@@ -76,11 +79,12 @@ mean lower sensibility. Good values to try are (40-60)."
        :warn :info))
   (let* ((big-set (getf options :big-set))
          (set (first arguments))
-         (key-args (list :threshold      (getf options :threshold      *threshold*)
-                         :recursive      (getf options :recursive      nil)
-                         :remove-errored (getf options :remove-errored nil)
-                         :hash-function  (getf options :hash           *hash-function*)
-                         :workers        (getf options :threads        *workers*)
+         (key-args (list :threshold           (getf options :threshold      *threshold*)
+                         :recursive           (getf options :recursive      nil)
+                         :remove-errored      (getf options :remove-errored nil)
+                         :hash-function       (getf options :hash           *hash-function*)
+                         :workers             (getf options :threads        *workers*)
+                         :use-sqlite     (not (getf options :no-db          (not *use-sqlite*)))
                          :image-types    (set-difference *image-types*
                                                          (getf options :ignore-types)
                                                          :test #'string=)))
