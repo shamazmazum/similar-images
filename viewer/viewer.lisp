@@ -66,7 +66,7 @@
     (with-open-file (input filename :element-type '(unsigned-byte 8))
       (loop for bytes = (read-sequence buffer input)
             until (zerop bytes)
-            do (gdk-pixbuf:gdk-pixbuf-loader-write loader buffer bytes)
+            do (gdk-pixbuf-loader-write-no-copy loader buffer bytes)
             finally (gdk-pixbuf:gdk-pixbuf-loader-close loader)))))
 
 (defun get-selected-name (tree-view)

@@ -35,6 +35,7 @@
   :pathname "viewer/"
   :serial t
   :components ((:file "package")
+               (:file "gdk-hackery")
                (:file "viewer"))
   :depends-on (:similar-images
                :cl-cffi-gtk))
