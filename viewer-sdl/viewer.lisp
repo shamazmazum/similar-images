@@ -57,7 +57,7 @@
                                   (format nil "~a ~dx~d" filename
                                           (sdl2:surface-width  img-surf)
                                           (sdl2:surface-height img-surf))
-                                  255 255 255 0)))
+                                  0 255 0 0)))
         (with-textures-from-surface ((img-text renderer img-surf)
                                      (text-text renderer text-surf))
           (sdl2:render-copy renderer img-text
