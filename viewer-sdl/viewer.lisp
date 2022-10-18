@@ -72,6 +72,12 @@
                                         (sdl2:surface-height text-surf)))))))
   (values))
 
+(defun safely-delete-file (filename)
+  (handler-case
+      (delete-file filename)
+    (file-error ()
+      (log:warn "Cannot remove ~a" filename))))
+
 (defun handle-conditions (c)
   (declare (ignore c))
   (when (find-restart 'gray-square)
@@ -103,6 +109,7 @@
                      (:scancode-escape
                       (sdl2:push-event :quit))
                      (:scancode-delete
+                      (safely-delete-file (funcall current))
                       (show-image (funcall remove)))
                      (:scancode-left
                       (show-image (funcall previous)))

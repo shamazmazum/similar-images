@@ -70,7 +70,7 @@
   :components ((:file "package")
                (:file "remover"))
   :depends-on (:similar-images
-               :rutils
+               :serapeum
                :imago/pngload
                :imago/jpeg-turbo))
 
@@ -81,7 +81,7 @@
   :license "2-clause BSD"
   :depends-on (:similar-images
                #-similar-images-no-gui
-               :similar-images/viewer
+               :similar-images/viewer-sdl
                :similar-images/remover))
 
 (defsystem :similar-images/tests
@@ -108,7 +108,8 @@
                (:file "cli"))
   :depends-on (:similar-images/misc
                :unix-opts
-               :rutils)
+               :alexandria
+               :split-sequence)
   :build-operation program-op
   :build-pathname "similar-images"
   :entry-point "similar-images-cli:main")

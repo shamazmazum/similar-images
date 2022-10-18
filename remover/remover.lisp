@@ -25,9 +25,10 @@ decompression is avoided when possible"
   (declare (type (or string pathname) image))
   (let ((type (pathname-type (pathname image))))
     (funcall
-     (rutils:assoc1 type *dimension-getters*
-                    :test    #'string=
-                    :default #'get-dimensions-rest)
+     (or
+      (serapeum:assocdr type *dimension-getters*
+                        :test #'string=)
+      #'get-dimensions-rest)
      image)))
 
 (defun get-biggest-image (images)

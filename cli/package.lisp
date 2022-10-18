@@ -2,6 +2,6 @@
   (:use #:cl
         #:similar-images
         #-similar-images-no-gui
-        #:similar-images-viewer
+        #:similar-images-viewer-sdl
         #:similar-images-remover)
   (:export #:main))

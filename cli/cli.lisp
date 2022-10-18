@@ -9,7 +9,7 @@
     (t (error "Wrong mode"))))
 
 (defun get-ignored-types (string)
-  (rutils:split-sequence #\, string))
+  (split-sequence:split-sequence #\, string))
 
 (opts:define-opts
   (:name :mode
@@ -97,8 +97,10 @@ mean lower sensibility. Good values to try are (40-60)."
        (format t "~a~%" similar))
       #-similar-images-no-gui
       (:view
-       (view similar)
-       (gtk:join-gtk-main))
+       (log:info "~d matches found"
+                 (length similar))
+       (when similar
+         (view-images (alexandria:flatten similar))))
       (:remove
        (remove-similar similar)))))
 
