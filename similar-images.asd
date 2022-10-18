@@ -1,6 +1,6 @@
 (defsystem :similar-images
   :name :similar-images
-  :version "0.2"
+  :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :description "Find similar images in big datasets"
   :license "2-clause BSD"
@@ -29,7 +29,7 @@
 #-similar-images-no-gui
 (defsystem :similar-images/viewer
   :name :similar-images/viewer
-  :version "0.2"
+  :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
   :pathname "viewer/"
@@ -43,7 +43,7 @@
 #-similar-images-no-gui
 (defsystem :similar-images/viewer-sdl
   :name :similar-images/viewer-sdl
-  :version "0.2"
+  :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
   :pathname "viewer-sdl/"
@@ -62,7 +62,7 @@
 
 (defsystem :similar-images/remover
   :name :similar-images/remover
-  :version "0.2"
+  :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
   :pathname "remover/"
@@ -76,7 +76,7 @@
 
 (defsystem :similar-images/misc
   :name :similar-images/misc
-  :version "0.2"
+  :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
   :depends-on (:similar-images
@@ -86,7 +86,7 @@
 
 (defsystem :similar-images/tests
   :name :similar-images/tests
-  :version "0.2"
+  :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
   :pathname "tests/"
@@ -99,7 +99,7 @@
 
 (defsystem :similar-images/cli
   :name :similar-images/cli
-  :version "0.2"
+  :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
   :pathname "cli/"

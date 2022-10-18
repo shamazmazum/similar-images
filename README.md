@@ -114,7 +114,7 @@ for similar images:
 (asdf:make :similar-images/cli)
 ~~~~
 
-If you do not have GTK, add `:similar-images-no-gui` feature before
+If you do not have SDL2, add `:similar-images-no-gui` feature before
 building. Usage:
 
 ~~~~
@@ -143,7 +143,7 @@ compared not with each other but with images from `BIG-DIRECTORY` (useful when
 you want to check if you already have a few pictures in your collection).
 
 Also there are additional 3 modes based on what you want to do with
-results. `view` is a mode used by default which launches simple GTK viewer with
+results. `view` is a mode used by default which launches simple SDL2 viewer with
 found images separated into groups by similarity. `print` just prints found
 images to console. `remove` removes all similar images in a group but one which
 has the biggest dimensions.
@@ -170,7 +170,7 @@ that image later the hash will be the same as before changing.
 
 ## Dependencies
 
-* GTK3 (for viewer)
+* SDL2 / SDL2-ttf / SDL2-image (for viewer)
 * jpeg-turbo C library (via `jpeg-turbo`)
 * SQLite
 
