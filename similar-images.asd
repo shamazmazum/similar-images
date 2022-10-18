@@ -40,6 +40,26 @@
   :depends-on (:similar-images
                :cl-cffi-gtk))
 
+#-similar-images-no-gui
+(defsystem :similar-images/viewer-sdl
+  :name :similar-images/viewer-sdl
+  :version "0.2"
+  :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
+  :license "2-clause BSD"
+  :pathname "viewer-sdl/"
+  :serial t
+  :components ((:file "package")
+               (:file "macros")
+               (:file "dlist-helper")
+               (:file "viewer"))
+  :depends-on (:similar-images
+               :sdl2
+               :sdl2-image
+               :sdl2-ttf
+               :font-discovery
+               :dlist
+               :serapeum))
+
 (defsystem :similar-images/remover
   :name :similar-images/remover
   :version "0.2"
