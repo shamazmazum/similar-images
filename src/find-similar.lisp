@@ -16,9 +16,9 @@
   (log:info "Searching for similar images")
   (loop with tree = (build-tree images-and-hashes)
         for image-and-hash in images-and-hashes
-        for close = (search-close tree image-and-hash
-                                  *threshold* #'hamming-distance
-                                  :key #'cdr)
+        for close = (items-in-ball tree image-and-hash
+                                   *threshold* #'hamming-distance
+                                   :key #'cdr)
         when (> (length close) 1)
         collect (mapcar #'car close) into result
         finally (return (remove-duplicates
@@ -50,8 +50,8 @@ pictures are considered similar."
                       (log:info "Searching for similar images")
                       (make-vp-tree big-hashes #'hamming-distance :key #'cdr))
         for image-and-hash in little-hashes
-        for close = (search-close tree image-and-hash
-                                  *threshold* #'hamming-distance
-                                  :key #'cdr)
+        for close = (items-in-ball tree image-and-hash
+                                   *threshold* #'hamming-distance
+                                   :key #'cdr)
         when close
         collect (mapcar #'car (cons image-and-hash close))))
