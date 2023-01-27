@@ -6,9 +6,9 @@
 big datasets. Simply call `find-similar` function with the directory
 which contains your images as its single argument:
 
-~~~~
+``` lisp
 (find-similar "/path/to/my/pictures")
-~~~~
+```
 
 This will scan the directory and its subdirectories for images and
 return sets of similar images (if any) in a list. There are some
@@ -26,9 +26,9 @@ Another good function is `similar-subset` which allows to compare a
 small set of images with a bigger one and find images in the small set
 which have similar pictures in the big one. Usage:
 
-~~~~
+``` lisp
 (similar-subset "/path/to/small/set" "/path/to/bigger/set")
-~~~~
+```
 
 It has the same keyword arguments as `find-similar`.
 
@@ -61,18 +61,20 @@ system. The first is `similar-images-remover` which holds
 from all matches. The remaining image is chosen with `best-criterion`
 optional argument. By default the image with the largest area is not
 removed. An example: deduplicate images in a directory:
-~~~~
+
+``` lisp
 (asdf:load-system :similar-images/misc)
 (similar-images-remover:remove-similar
   (similar-images:find-similar-prob "~/my-images/"))
-~~~~
+```
 
 You can also review similar images in GTK application (it's ugly ;):
-~~~~
+
+``` lisp
 (asdf:load-system :similar-images/misc)
 (similar-images-viewer:view
   (similar-images:find-similar-prob "~/my-images/"))
-~~~~
+```
 
 Control keys:
 * `Right arrow` — expand match
@@ -84,23 +86,33 @@ Control keys:
 You can install **similar-images** from [Ultralisp](https://ultralisp.org/)
 repository. Add Ultralisp repository to quicklisp (if you haven't already):
 
-~~~~
+``` lisp
 (ql-dist:install-dist "http://dist.ultralisp.org/"
                       :prompt nil)
-~~~~
+```
 
 and install **similar-images**:
 
-~~~~
+``` lisp
 (ql:quickload :similar-images)
-~~~~
+```
+
+If you encounter problems with `sdl2-ttf` try this:
+
+``` lisp
+(alexandria:when-let*
+    ((dist (find "ultralisp" (ql-dist:all-dists)
+                 :key #'ql-dist:name :test #'string=))
+     (system (ql-dist:find-system-in-dist "sdl2-ttf" dist)))
+  (setf (ql-dist:preference system) 0))
+```
 
 CLI tool can be build like so:
 
-~~~~
+``` lisp
 (ql:quickload :similar-images/cli)
 (asdf:make :similar-images/cli)
-~~~~
+```
 
 **similar-images** loads all image hashes into memory, so make sure you have a
 big heap for that. If you are using `sbcl` load it supplying
