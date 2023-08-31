@@ -52,6 +52,10 @@ mean lower sensibility. Good values to try are (40-60)."
                  (intern
                   (string-upcase hash)
                   (find-package :keyword))))
+  (:name :exhaustive
+   :description "Run exhaustive search (slow)"
+   :short #\e
+   :long "exhaustive")
   (:name :remove-errored
    :description "Remove images which cannot be read (dangerous!)"
    :long "remove-errored")
@@ -77,8 +81,8 @@ mean lower sensibility. Good values to try are (40-60)."
   (log:config
    (if (getf options :quiet)
        :warn :info))
-  (let* ((big-set (getf options :big-set))
-         (set (first arguments))
+  (let* ((big-set    (getf options :big-set))
+         (exhaustive (getf options :exhaustive nil))
          (key-args (list :threshold           (getf options :threshold      *threshold*)
                          :recursive           (getf options :recursive      nil)
                          :remove-errored      (getf options :remove-errored nil)
@@ -88,9 +92,15 @@ mean lower sensibility. Good values to try are (40-60)."
                          :image-types    (set-difference *image-types*
                                                          (getf options :ignore-types)
                                                          :test #'string=)))
-         (similar (if big-set
-                      (apply #'similar-subset set big-set key-args)
-                      (apply #'find-similar-prob set key-args))))
+         (set (first arguments))
+         (similar
+          (cond
+            (big-set
+             (apply #'similar-subset set big-set key-args))
+            (exhaustive
+             (apply #'find-similar set key-args))
+            (t
+             (apply #'find-similar-prob set key-args)))))
 
     (case (getf options :mode :view)
       (:print
