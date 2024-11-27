@@ -3,5 +3,6 @@
         #:similar-images
         #-similar-images-no-gui
         #:similar-images-viewer-sdl
-        #:similar-images-remover)
+        #:similar-images-remover
+        #:command-line-parse)
   (:export #:main))

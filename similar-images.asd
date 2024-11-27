@@ -107,7 +107,7 @@
   :components ((:file "package")
                (:file "cli"))
   :depends-on (:similar-images/misc
-               :unix-opts
+               :command-line-parse
                :alexandria
                :split-sequence)
   :build-operation program-op

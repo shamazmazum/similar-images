@@ -11,88 +11,88 @@
 (defun get-ignored-types (string)
   (split-sequence:split-sequence #\, string))
 
-(opts:define-opts
-  (:name :mode
-   :description (format
-                 nil "Mode of operation (~{~a~^, ~})"
-                 '(#-similar-images-no-gui "view" "print" "remove"))
-   :short #\m
-   :long "mode"
-   :meta-var "MODE"
-   :arg-parser #'get-mode)
-  (:name :quiet
-   :description "Be quiet"
-   :short #\q
-   :long "quiet")
-  (:name :recursive
-   :description "Search for images recursively"
-   :short #\r
-   :long "recursive")
-  (:name :no-db
-   :description "Do not use hash database"
-   :long "no-db")
-  (:name :threads
-   :description "Number of threads"
-   :long "threads"
-   :meta-var "THREADS"
-   :arg-parser #'parse-integer)
-  (:name :threshold
-   :description "Sensitivity of the algorithm (0-1024). Lesser values
-mean lower sensibility. Good values to try are (40-60)."
-   :short #\t
-   :long "threshold"
-   :meta-var "THRESHOLD"
-   :arg-parser #'parse-integer)
-  (:name :hash
-   :description "Hash function to use (can be ahash or dhash)"
-   :short #\h
-   :long "hash"
-   :meta-var "HASH"
-   :arg-parser (lambda (hash)
-                 (intern
-                  (string-upcase hash)
-                  (find-package :keyword))))
-  (:name :exhaustive
-   :description "Run exhaustive search (slow)"
-   :short #\e
-   :long "exhaustive")
-  (:name :remove-errored
-   :description "Remove images which cannot be read (dangerous!)"
-   :long "remove-errored")
-  (:name :big-set
-   :description "Specify the big set to match against"
-   :long "big-set"
-   :meta-var "BIG-DIRECTORY"
-   :arg-parser #'identity)
-  (:name :ignore-types
-   :long "ignore-types"
-   :description "List of image types to be ignored, separated by comma"
-   :meta-var "TYPES"
-   :arg-parser #'get-ignored-types))
+(defparameter *cmd-parser*
+  (seq
+   (optional
+    (flag   :quiet
+            :short       #\q
+            :long        "quiet"
+            :description "Be quiet")
+    (flag   :recursive
+            :short       #\r
+            :long        "recursive"
+            :description "Search for images recursively")
+    (flag   :no-db
+            :long        "no-db"
+            :description "Do not use the database")
+    (option :threads "N"
+            :long        "threads"
+            :description "Number of threads for hash calculation"
+            :fn          #'parse-integer)
+    (option :threshold "T"
+            :long        "threshold"
+            :short       #\t
+            :description "Sensitivity of the algorithm (0-1024). Lesser values mean lower sensibility. Good values to try are (40-60)."
+            :fn          #'parse-integer)
+    (option :hash "HASH"
+            :short       #\h
+            :long        "hash"
+            :description "Hash function to use (can be ahash or dhash)"
+            :fn (lambda (hash)
+                  (intern
+                   (string-upcase hash)
+                   (find-package :keyword))))
+    (flag   :exhaustive
+            :short       #\e
+            :long        "exhaustive"
+            :description "Run exhaustive search (slow)")
+    (flag   :remove-errored
+            :long        "remove-errored"
+            :description "Remove images which cannot be read (dangerous!)")
+    (option :big-set "BIG-DIRECTORY"
+            :long        "big-set"
+            :description "Specify the big set to match against")
+    (option :ignore-types "TYPES"
+            :long        "ignore-types"
+            :description "List of image types to be ignored, separated by comma"
+            :fn          #'get-ignored-types))
+   (option :mode "MODE"
+            :short       #\m
+            :long        "mode"
+            :fn          #'get-mode
+            :description (format
+                          nil "Mode of operation (~{~a~^, ~})"
+                          '(#-similar-images-no-gui "view" "print" "remove")))
+   (argument :directory "DIRECTORY")))
 
 (defun print-usage-and-quit ()
-  (opts:describe :usage-of "similar-images"
-                 :args "DIRECTORY")
+  (print-usage *cmd-parser* "similar-images")
   (uiop:quit 1))
 
-(defun do-all-stuff (options arguments)
-  (when (/= (length arguments) 1)
-    (print-usage-and-quit))
+(defun get-arguments-or-fail ()
+  (handler-case
+      (parse-argv *cmd-parser*)
+    (error () (print-usage-and-quit))))
+
+(defun %assoc (key list &optional default)
+  (or (alexandria:assoc-value list key :test #'eq)
+      default))
+
+(defun do-all-stuff (args)
   (log:config
-   (if (getf options :quiet)
-       :warn :info))
-  (let* ((big-set    (getf options :big-set))
-         (exhaustive (getf options :exhaustive nil))
-         (key-args (list :threshold           (getf options :threshold      *threshold*)
-                         :recursive           (getf options :recursive      nil)
-                         :remove-errored      (getf options :remove-errored nil)
-                         :hash-function       (getf options :hash           *hash-function*)
-                         :workers             (getf options :threads        *workers*)
-                         :use-sqlite     (not (getf options :no-db          (not *use-sqlite*)))
-                         :image-types    (set-difference *image-types*
-                                                         (getf options :ignore-types)
-                                                         :test #'string=)))
-         (set (first arguments))
+   (if (%assoc :quiet args) :warn :info))
+  (let* ((big-set    (%assoc :big-set    args))
+         (exhaustive (%assoc :exhaustive args))
+         (key-args (list :threshold       (%assoc :threshold      args *threshold*)
+                         :recursive       (%assoc :recursive      args)
+                         :remove-errored  (%assoc :remove-errored args)
+                         :hash-function   (%assoc :hash           args *hash-function*)
+                         :workers         (%assoc :threads        args *workers*)
+                         :use-sqlite (not (%assoc :no-db          args (not *use-sqlite*)))
+                         :image-types (set-difference *image-types*
+                                                      (%assoc :ignore-types args)
+                                                      :test #'string=)))
+         (set (%assoc :directory args))
          (similar
           (cond
             (big-set
@@ -102,7 +102,7 @@ mean lower sensibility. Good values to try are (40-60)."
             (t
              (apply #'find-similar-prob set key-args)))))
 
-    (case (getf options :mode :view)
+    (case (%assoc :mode args)
       (:print
        (format t "~a~%" similar))
       #-similar-images-no-gui
@@ -123,12 +123,5 @@ mean lower sensibility. Good values to try are (40-60)."
 
 (defun main ()
   (set-signal-handlers)
-  (handler-bind
-      ((opts:troublesome-option
-         (lambda (c)
-           (declare (ignore c))
-           (print-usage-and-quit))))
-    (multiple-value-bind (options arguments)
-        (opts:get-opts)
-      (do-all-stuff options arguments)
-      (uiop:quit 0))))
+  (do-all-stuff (get-arguments-or-fail))
+  (uiop:quit 0))
