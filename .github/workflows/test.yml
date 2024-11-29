@@ -20,6 +20,9 @@ jobs:
       - name: Install qlot
         run: |
           ros install qlot
+      - name: Set Path
+        run: |
+          echo "${HOME}/.roswell/bin" >> $GITHUB_PATH
       - name: Run tests
         run: |
           cd $GITHUB_WORKSPACE
