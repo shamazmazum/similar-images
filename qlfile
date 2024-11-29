@@ -1,0 +1,17 @@
+ql cl-fad
+ultralisp sharplispers-log4cl
+ultralisp shamazmazum-vp-trees
+ultralisp shamazmazum-perceptual-hashes
+ql cl-sqlite
+ql lparallel
+ql snakes
+ql cl-cffi-gtk
+ql serapeum
+ql dlist
+ultralisp lispgames-cl-sdl2
+ultralisp lispgames-cl-sdl2-image
+ultralisp Shinmera-font-discovery
+ql alexandria
+ql split-sequence
+github shamazmazum/command-line-parse
+ql cl-sdl2-ttf

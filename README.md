@@ -83,36 +83,18 @@ Control keys:
 
 ## Installation
 
-You can install **similar-images** from [Ultralisp](https://ultralisp.org/)
-repository. Add Ultralisp repository to quicklisp (if you haven't already):
+You can install **similar-images** with qlot:
 
-``` lisp
-(ql-dist:install-dist "http://dist.ultralisp.org/"
-                      :prompt nil)
-```
-
-and install **similar-images**:
-
-``` lisp
-(ql:quickload :similar-images)
-```
-
-If you encounter problems with `sdl2-ttf` try this:
-
-``` lisp
-(alexandria:when-let*
-    ((dist (find "ultralisp" (ql-dist:all-dists)
-                 :key #'ql-dist:name :test #'string=))
-     (system (ql-dist:find-system-in-dist "sdl2-ttf" dist)))
-  (setf (ql-dist:preference system) 0))
-```
+~~~~
+qlot install
+~~~~
 
 CLI tool can be build like so:
 
-``` lisp
-(ql:quickload :similar-images/cli)
+~~~~
+qlot exec sbcl
 (asdf:make :similar-images/cli)
-```
+~~~~
 
 **similar-images** loads all image hashes into memory, so make sure you have a
 big heap for that. If you are using `sbcl` load it supplying
