@@ -14,10 +14,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install info install-info libturbojpeg0-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev
-      - name: Install CIM
+      - name: Install roswell
         run: |
-          curl -L https://raw.githubusercontent.com/shamazmazum/cl-cirrus/github-actions/install-actions.sh | sh
-          cl -e '(ql-dist:install-dist "http://dist.ultralisp.org/" :prompt nil)'
+          curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
+      - name: Install qlot
+        run: |
+          ros install qlot
       - name: Run tests
         run: |
-          cl -f $GITHUB_WORKSPACE/tests/travis.lisp
+          cd $GITHUB_WORKSPACE
+          qlot install
+          qlot exec ros -l tests/travis.lisp
