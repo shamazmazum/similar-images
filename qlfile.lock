@@ -26,14 +26,6 @@
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
   :version "ql-2016-08-25"))
-("snakes" .
- (:class qlot/source/ql:source-ql
-  :initargs (:%version :latest)
-  :version "ql-2022-11-06"))
-("cl-cffi-gtk" .
- (:class qlot/source/ql:source-ql
-  :initargs (:%version :latest)
-  :version "ql-2023-02-14"))
 ("serapeum" .
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
@@ -70,3 +62,7 @@
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
   :version "ql-2024-10-12"))
+("BnMcGn-snakes" .
+ (:class qlot/source/ultralisp:source-ultralisp
+  :initargs (:%version :latest)
+  :version "ultralisp-20241128044523"))
