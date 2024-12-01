@@ -11,13 +11,12 @@
 (defun get-ignored-types (string)
   (split-sequence:split-sequence #\, string))
 
-(defparameter *cmd-parser*
+(defparameter *prune-parser*
+  (argument :directory "DIRECTORY"))
+
+(defparameter *process-parser*
   (seq
    (optional
-    (flag   :quiet
-            :short       #\q
-            :long        "quiet"
-            :description "Be quiet")
     (flag   :recursive
             :short       #\r
             :long        "recursive"
@@ -65,6 +64,21 @@
                           '(#-similar-images-no-gui "view" "print" "remove")))
    (argument :directory "DIRECTORY")))
 
+(defparameter *cmd-parser*
+  (seq
+   (optional
+    (flag :quiet
+          :short       #\q
+          :long        "quiet"
+          :description "Be quiet"))
+   (choice
+    (seq
+     (command :what "prune" :prune)
+     *prune-parser*)
+    (seq
+     (command :what "find" :find)
+     *process-parser*))))
+
 (defun print-usage-and-quit ()
   (print-usage *cmd-parser* "similar-images")
   (uiop:quit 1))
@@ -78,9 +92,10 @@
   (or (alexandria:assoc-value list key :test #'eq)
       default))
 
-(defun do-all-stuff (args)
-  (log:config
-   (if (%assoc :quiet args) :warn :info))
+(defun prune (args)
+  (prune-database (%assoc :directory args)))
+
+(defun process (args)
   (let* ((big-set    (%assoc :big-set    args))
          (exhaustive (%assoc :exhaustive args))
          (key-args (list :threshold       (%assoc :threshold      args *threshold*)
@@ -123,5 +138,10 @@
 
 (defun main ()
   (set-signal-handlers)
-  (do-all-stuff (get-arguments-or-fail))
+  (let ((args (get-arguments-or-fail)))
+    (log:config
+     (if (%assoc :quiet args) :warn :info))
+    (ecase (%assoc :what args)
+      (:prune (prune   args))
+      (:find  (process args))))
   (uiop:quit 0))
