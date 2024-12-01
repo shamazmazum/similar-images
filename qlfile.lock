@@ -61,4 +61,4 @@
 ("shamazmazum-command-line-parse" .
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
-  :version "ultralisp-20241130114002"))
+  :version "ultralisp-20241201162000"))

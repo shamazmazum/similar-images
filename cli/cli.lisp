@@ -73,10 +73,12 @@
           :description "Be quiet"))
    (choice
     (seq
-     (command :what "prune" :prune)
+     (command :what "prune" :prune
+              :description "Remove old entries from the database")
      *prune-parser*)
     (seq
-     (command :what "find" :find)
+     (command :what "find" :find
+              :description "Find similar images in a directory")
      *process-parser*))))
 
 (defun print-usage-and-quit ()
