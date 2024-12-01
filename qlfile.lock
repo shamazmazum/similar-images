@@ -54,10 +54,6 @@
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
   :version "ql-2021-05-31"))
-("command-line-parse" .
- (:class qlot/source/github:source-github
-  :initargs (:repos "shamazmazum/command-line-parse" :ref nil :branch nil :tag nil)
-  :version "github-6e7d25a3230f6cfeea60a34b908396834ce9814b"))
 ("cl-sdl2-ttf" .
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
@@ -66,3 +62,7 @@
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
   :version "ultralisp-20241128044523"))
+("shamazmazum-command-line-parse" .
+ (:class qlot/source/ultralisp:source-ultralisp
+  :initargs (:%version :latest)
+  :version "ultralisp-20241130114002"))

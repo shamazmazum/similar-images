@@ -11,6 +11,6 @@ ultralisp lispgames-cl-sdl2-image
 ultralisp Shinmera-font-discovery
 ql alexandria
 ql split-sequence
-github shamazmazum/command-line-parse
 ql cl-sdl2-ttf
 ultralisp BnMcGn-snakes
+ultralisp shamazmazum-command-line-parse
