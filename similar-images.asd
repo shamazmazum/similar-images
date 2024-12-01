@@ -4,7 +4,7 @@
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :description "Find similar images in big datasets"
   :license "2-clause BSD"
-  :pathname "src/"
+  :pathname "src"
   :serial t
   :components ((:file "package")
                (:file "reporter")
@@ -27,26 +27,12 @@
                :snakes))
 
 #-similar-images-no-gui
-(defsystem :similar-images/viewer
-  :name :similar-images/viewer
-  :version "0.3"
-  :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
-  :license "2-clause BSD"
-  :pathname "viewer/"
-  :serial t
-  :components ((:file "package")
-               (:file "gdk-hackery")
-               (:file "viewer"))
-  :depends-on (:similar-images
-               :cl-cffi-gtk))
-
-#-similar-images-no-gui
 (defsystem :similar-images/viewer-sdl
   :name :similar-images/viewer-sdl
   :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
-  :pathname "viewer-sdl/"
+  :pathname "viewer-sdl"
   :serial t
   :components ((:file "package")
                (:file "macros")
@@ -65,7 +51,7 @@
   :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
-  :pathname "remover/"
+  :pathname "remover"
   :serial t
   :components ((:file "package")
                (:file "remover"))
@@ -89,7 +75,7 @@
   :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
-  :pathname "tests/"
+  :pathname "tests"
   :serial t
   :components ((:file "package")
                (:file "tests"))
@@ -102,7 +88,7 @@
   :version "0.3"
   :author "Vasily Postnicov <shamaz.mazum@gmail.com>"
   :license "2-clause BSD"
-  :pathname "cli/"
+  :pathname "cli"
   :serial t
   :components ((:file "package")
                (:file "cli"))
