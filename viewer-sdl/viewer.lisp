@@ -46,20 +46,27 @@
         surface))))
 
 (sera:defconstructor image-info
+  (label       string)
   (pathname    pathname)
   (local-idx   (integer 0))
   (local-total (integer 1))
   (group-idx   (integer 0))
   (group-total (integer 1)))
 
-(defun unfold-groups (list)
+(sera:-> unfold-groups (list (or pathname null))
+         (values list &optional))
+(defun unfold-groups (list base-directory)
   (loop with group-total = (length list)
         for group-idx from 0 by 1
         for group in list
         for local-total = (length group) append
         (loop for local-idx from 0 by 1
               for pathname in group collect
-              (image-info pathname local-idx local-total group-idx group-total))))
+              (image-info
+               (if base-directory
+                   (enough-namestring pathname base-directory)
+                   (namestring pathname))
+               pathname local-idx local-total group-idx group-total))))
 
 (sera:-> 0+ (number)
          (values number &optional))
@@ -80,7 +87,7 @@
                                           (0+ (image-info-group-total image-info))
                                           (1+ (image-info-local-idx   image-info))
                                           (0+ (image-info-local-total image-info))
-                                          (image-info-pathname image-info)
+                                          (image-info-label image-info)
                                           (sdl2:surface-width  img-surf)
                                           (sdl2:surface-height img-surf))
                                   0 255 0 0)))
@@ -100,7 +107,7 @@
 
 (defun safely-delete-file (filename)
   (handler-case
-      (delete-file filename)
+      (delete-file (image-info-pathname filename))
     (file-error ()
       (log:warn "Cannot remove ~a" filename))))
 
@@ -110,9 +117,13 @@
     (invoke-restart 'gray-square))
   (continue))
 
-(defun view-images (filenames)
+(defun view-images (filenames &optional base-directory)
   (multiple-value-bind (current next previous remove)
-      (sera:deconstruct (make-image-walker (unfold-groups filenames)))
+      (sera:deconstruct
+       (make-image-walker
+        (unfold-groups
+         filenames
+         (if base-directory (uiop:ensure-directory-pathname base-directory)))))
     (sdl2:with-init (:everything)
       (with-sdl2-image (:jpg :png)
         (with-sdl2-ttf

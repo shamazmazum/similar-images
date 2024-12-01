@@ -121,10 +121,8 @@
        (format t "~a~%" similar))
       #-similar-images-no-gui
       (:view
-       (log:info "~d matches found"
-                 (length similar))
        (when similar
-         (view-images similar)))
+         (view-images similar (%assoc :directory args))))
       (:remove
        (remove-similar similar)))))
 
