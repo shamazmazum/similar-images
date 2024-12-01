@@ -29,7 +29,12 @@ calculate perceptional hashes but don't provide any storage for them."))
 (defgeneric close-db (database)
   (:documentation "Close database")
   (:method ((database hash-database))
-    t))
+    (values)))
+
+(defgeneric remove-missing (database)
+  (:documentation "Remove entries which are missing from the base directory")
+  (:method ((database hash-database))
+    (values)))
 
 (defmacro with-database ((database init-form) &body body)
   "Execute @c(body) in the context on open database
@@ -39,3 +44,11 @@ database when control leaves @c(body)."
      (unwind-protect
           (progn ,@body)
        (close-db ,database))))
+
+(defun open-database (base-directory)
+  "Open a database. If *USE-SQLITE* is NIL, a dummy database is used."
+  (make-instance
+   (if *use-sqlite*
+       'sqlite-database
+       'dummy-database)
+   :base-directory base-directory))

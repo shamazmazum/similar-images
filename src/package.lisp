@@ -12,6 +12,7 @@
   (:export #:find-similar
            #:find-similar-prob
            #:similar-subset
+           #:prune-database
 
            #:*hash-function*
            #:*threshold*

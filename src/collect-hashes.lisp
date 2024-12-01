@@ -50,11 +50,7 @@
   "Return consed pathname and hash for images in the @c(directory) and
 its subdirectories"
   (log:info "Collecting hashes")
-  (with-database (db (make-instance
-                      (if *use-sqlite*
-                          'sqlite-database
-                          'dummy-database)
-                      :base-directory directory))
+  (with-database (db (open-database directory))
     (let ((progress-state (make-progress-state))
           (future-generator (imap (lambda (image)
                                     (cons image (hash db image)))
@@ -74,3 +70,9 @@ its subdirectories"
                do (report-processed
                    progress-state
                    (length hash-futures))))))))
+
+(defun prune-database (directory)
+  "Remove database entries for files which are not present on the
+filesystem."
+  (with-database (db (open-database directory))
+    (remove-missing db)))

@@ -46,7 +46,8 @@
       (setf handle (connect db-pathname)))))
 
 (defmethod close-db ((database sqlite-database))
-  (disconnect (db-handle database)))
+  (disconnect (db-handle database))
+  (values))
 
 (defmethod insert-new ((database sqlite-database) images-and-hashes)
   (let ((handle (db-handle database))
@@ -76,3 +77,31 @@
     (if db-hash
         (coerce db-hash 'bit-vector)
         (call-next-method))))
+
+(defmacro with-sql-statement ((statement db sql) &body body)
+  `(let ((,statement (prepare-statement ,db ,sql)))
+     (unwind-protect
+          (progn ,@body)
+       (finalize-statement ,statement))))
+
+(defun file-exists-p (filename base-directory)
+  "Check if FILENAME is an existing file in BASE-DIRECTORY"
+  (probe-file
+   (merge-pathnames (pathname filename)
+                    (uiop:ensure-directory-pathname base-directory))))
+
+(defmethod remove-missing ((database sqlite-database))
+  (let ((handle (db-handle database))
+        (base-directory (db-base-directory database)))
+    (with-transaction handle
+      (let ((entries-to-remove
+             (with-sql-statement (st handle "select name from hashes3;")
+               (loop while (step-statement st)
+                     for name = (statement-column-value st 0)
+                     unless (file-exists-p name base-directory)
+                     collect name))))
+        (loop for entry in entries-to-remove do
+              (log:info "Removing stale entry ~a" entry)
+              (execute-non-query handle "delete from hashes3 where name = ?"
+                                 entry)))))
+  (values))
