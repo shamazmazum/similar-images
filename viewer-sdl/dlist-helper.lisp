@@ -29,7 +29,7 @@
   (prev    walker-function)
   (remove  walker-function))
 
-(sera:-> make-image-walker ((cons pathname))
+(sera:-> make-image-walker (list)
          (values image-walker &optional))
 (defun make-image-walker (filenames)
   (let ((dcons (dlist:dlist-first (list->dlist filenames))))

@@ -89,8 +89,7 @@
     (error () (print-usage-and-quit))))
 
 (defun %assoc (key list &optional default)
-  (or (alexandria:assoc-value list key :test #'eq)
-      default))
+  (or (cdr (assoc key list)) default))
 
 (defun prune (args)
   (prune-database (%assoc :directory args)))
@@ -125,7 +124,7 @@
        (log:info "~d matches found"
                  (length similar))
        (when similar
-         (view-images (alexandria:flatten similar))))
+         (view-images similar)))
       (:remove
        (remove-similar similar)))))
 

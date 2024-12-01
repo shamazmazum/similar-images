@@ -9,7 +9,6 @@ ql dlist
 ultralisp lispgames-cl-sdl2
 ultralisp lispgames-cl-sdl2-image
 ultralisp Shinmera-font-discovery
-ql alexandria
 ql split-sequence
 ql cl-sdl2-ttf
 ultralisp BnMcGn-snakes

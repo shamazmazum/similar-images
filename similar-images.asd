@@ -94,7 +94,6 @@
                (:file "cli"))
   :depends-on (:similar-images/misc
                :command-line-parse
-               :alexandria
                :split-sequence)
   :build-operation program-op
   :build-pathname "similar-images"

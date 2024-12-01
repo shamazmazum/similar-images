@@ -45,16 +45,42 @@
                          (sdl2:surface-format surface) 100 100 100))
         surface))))
 
+(sera:defconstructor image-info
+  (pathname    pathname)
+  (local-idx   (integer 0))
+  (local-total (integer 1))
+  (group-idx   (integer 0))
+  (group-total (integer 1)))
+
+(defun unfold-groups (list)
+  (loop with group-total = (length list)
+        for group-idx from 0 by 1
+        for group in list
+        for local-total = (length group) append
+        (loop for local-idx from 0 by 1
+              for pathname in group collect
+              (image-info pathname local-idx local-total group-idx group-total))))
+
+(sera:-> 0+ (number)
+         (values number &optional))
+(declaim (inline 0+))
+(defun 0+ (x) x)
+
 (sera:-> render-image
-         (sdl2-ffi:sdl-renderer (or pathname null))
+         (sdl2-ffi:sdl-renderer (or image-info null))
          (values &optional))
-(defun render-image (renderer filename)
-  (when filename
+(defun render-image (renderer image-info)
+  (when image-info
     (with-font (font (find-font "DejaVu Sans"))
-      (with-surfaces ((img-surf (load-image-with-fallback filename))
+      (with-surfaces ((img-surf (load-image-with-fallback (image-info-pathname image-info)))
                       (text-surf (sdl2-ttf:render-utf8-solid
                                   font
-                                  (format nil "~a ~dx~d" filename
+                                  (format nil "[~d/~d] [~d/~d] ~a ~dx~d"
+                                          (1+ (image-info-group-idx   image-info))
+                                          (0+ (image-info-group-total image-info))
+                                          (1+ (image-info-local-idx   image-info))
+                                          (0+ (image-info-local-total image-info))
+                                          (image-info-pathname image-info)
                                           (sdl2:surface-width  img-surf)
                                           (sdl2:surface-height img-surf))
                                   0 255 0 0)))
@@ -84,12 +110,9 @@
     (invoke-restart 'gray-square))
   (continue))
 
-(sera:-> view-images
-         ((cons pathname))
-         (values &optional))
 (defun view-images (filenames)
   (multiple-value-bind (current next previous remove)
-      (sera:deconstruct (make-image-walker filenames))
+      (sera:deconstruct (make-image-walker (unfold-groups filenames)))
     (sdl2:with-init (:everything)
       (with-sdl2-image (:jpg :png)
         (with-sdl2-ttf

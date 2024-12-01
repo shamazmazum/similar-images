@@ -46,10 +46,6 @@
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
   :version "ultralisp-20241128044523"))
-("alexandria" .
- (:class qlot/source/ql:source-ql
-  :initargs (:%version :latest)
-  :version "ql-2024-10-12"))
 ("split-sequence" .
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
