@@ -90,9 +90,6 @@
       (parse-argv *cmd-parser*)
     (error () (print-usage-and-quit))))
 
-(defun %assoc (key list &optional default)
-  (or (cdr (assoc key list)) default))
-
 (defun prune (args)
   (prune-database (%assoc :directory args)))
 
