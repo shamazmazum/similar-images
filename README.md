@@ -112,31 +112,41 @@ If you do not have SDL2, add `:similar-images-no-gui` feature before
 building. Usage:
 
 ~~~~
-vasily@vonbraun:~/.quicklisp/local-projects/similar-images % ./cli/similar-images
+Usage: similar-images [-q|--quiet]
+                      prune DIRECTORY |
+                      find
+                      [-r|--recursive] [--no-db] [--threads N]
+                      [-t|--threshold T] [-h|--hash HASH] [-e|--exhaustive]
+                      [--remove-errored] [--big-set BIG-DIRECTORY]
+                      [--ignore-types TYPES]
+                      -m|--mode MODE DIRECTORY
 
-Usage: similar-images [-m|--mode MODE] [-q|--quiet] [-r|--recursive]
-                      [--threads THREADS] [-t|--threshold THRESHOLD] [--remove-errored]
-                      [--big-set BIG-DIRECTORY] DIRECTORY
+Description of commands
+find      Find similar images in a directory
+prune     Remove old entries from the database
 
-Available options:
-  -m, --mode MODE           Mode of operation (view, print or remove)
-  -q, --quiet               Be quiet
-  -r, --recursive           Search for images recursively
-  --threads THREADS         Number of threads
-  -t, --threshold THRESHOLD
-                            Sensitivity of the algorithm (0-1024). Lesser values
-                           mean lower sensibility. Good values to try are (40-60).
-  --remove-errored          Remove images which cannot be read (dangerous!)
-  --big-set DIRECTORY       Specify the big set to match against
+Description of flags and options
+-m|--mode MODE              Mode of operation (view, print, remove)
+--ignore-types TYPES        List of image types to be ignored, separated by comma
+--big-set BIG-DIRECTORY     Specify the big set to match against
+--remove-errored            Remove images which cannot be read (dangerous!)
+-e|--exhaustive             Run exhaustive search (slow)
+-h|--hash HASH              Hash function to use (can be ahash or dhash)
+-t|--threshold T            Sensitivity of the algorithm (0-1024). Lesser values mean lower sensibility. Good values to try are (40-60).
+--threads N                 Number of threads for hash calculation
+--no-db                     Do not use the database
+-r|--recursive              Search for images recursively
+-q|--quiet                  Be quiet
 ~~~~
 
-There are 2 modes of operation. The first one is used when you do not specify
-`--big-set` option. In this mode images in `DIRECTORY` are searched for
-similarities. If you provide `--big-set` option then images in `DIRECTORY` are
-compared not with each other but with images from `BIG-DIRECTORY` (useful when
-you want to check if you already have a few pictures in your collection).
+Subcommand `find` does the search. There are 2 modes of operation of this
+subcommand. The first one is used when you do not specify `--big-set` option. In
+this mode images in `DIRECTORY` are searched for similarities. If you provide
+`--big-set` option then images in `DIRECTORY` are compared not with each other
+but with images from `BIG-DIRECTORY` (useful when you want to check if you
+already have a few pictures in your collection).
 
-Also there are additional 3 modes based on what you want to do with
+Also there are additional 3 modes based on what you want to do with the
 results. `view` is a mode used by default which launches simple SDL2 viewer with
 found images separated into groups by similarity. `print` just prints found
 images to console. `remove` removes all similar images in a group but one which
@@ -146,11 +156,15 @@ You may wish to use `-r` to scan all sub directories of `DIRECTORY` or
 `BIG-DIRECTORY`. `--remove-errored` removes all images which cannot be
 read. `--threads` sets the number of threads which calculate image hashes.
 
+Subcommand `prune` can be used to remove entries in the hash database which are
+related to non-existing files.
+
 ## Caveats
 
 The hash used in this library (ahash) is fast to calculate but can give false
 positives (especially with high threshold value). Therefore you must use
-`remove` mode in CLI tool with care.
+`remove` mode in CLI tool with care. The same is applicable to a better hash,
+dhash.
 
 Also `pngload` sometimes fails to load semi-broken png images which can be
 loaded with another libraries, so `--remove-errored` option must be used with
