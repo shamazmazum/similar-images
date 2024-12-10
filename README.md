@@ -159,6 +159,15 @@ read. `--threads` sets the number of threads which calculate image hashes.
 Subcommand `prune` can be used to remove entries in the hash database which are
 related to non-existing files.
 
+## Examples
+
+To find and demonstrate similar images in a directory `photos` and all its
+subdirectories using dhash and a similarity threshold of `100` use
+~~~~
+similar-images find -r --threads 4 -t 100 -h dhash -m view photos
+~~~~
+Missing hashes will be calculated using 4 threads.
+
 ## Caveats
 
 The hash used in this library (ahash) is fast to calculate but can give false
