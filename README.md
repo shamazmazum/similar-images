@@ -67,7 +67,7 @@ removed. An example: deduplicate images in a directory:
   (similar-images:find-similar-prob "~/my-images/"))
 ```
 
-You can also review similar images in GTK application (it's ugly ;):
+You can also review similar images in an SDL application:
 
 ``` lisp
 (asdf:load-system :similar-images/misc)
