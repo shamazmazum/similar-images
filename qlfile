@@ -5,7 +5,6 @@ ultralisp shamazmazum-perceptual-hashes
 ql cl-sqlite
 ql lparallel
 ql serapeum
-ql dlist
 ultralisp lispgames-cl-sdl2
 ultralisp lispgames-cl-sdl2-image
 ultralisp Shinmera-font-discovery

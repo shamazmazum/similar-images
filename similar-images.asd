@@ -36,14 +36,13 @@
   :serial t
   :components ((:file "package")
                (:file "macros")
-               (:file "dlist-helper")
+               (:file "zipper")
                (:file "viewer"))
   :depends-on (:similar-images
                :sdl2
                :sdl2-image
                :sdl2-ttf
                :font-discovery
-               :dlist
                :serapeum))
 
 (defsystem :similar-images/remover

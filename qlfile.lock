@@ -30,10 +30,6 @@
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
   :version "ql-2024-10-12"))
-("dlist" .
- (:class qlot/source/ql:source-ql
-  :initargs (:%version :latest)
-  :version "ql-2012-11-25"))
 ("lispgames-cl-sdl2" .
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
