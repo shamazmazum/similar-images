@@ -2,9 +2,9 @@
 
 (defun build-tree (images-and-hashes)
   "Build VP-tree on a set of image hashes"
-  (make-vp-tree images-and-hashes
-                #'hamming-distance
-                :key #'cdr))
+  (vp:make-vp-tree images-and-hashes
+                   #'hamming-distance
+                   :key #'cdr))
 
 (defun set-equal-p (set1 set2)
   "Return T if set1 == set2, NIL otherwise"
@@ -16,9 +16,9 @@
   (log:info "Searching for similar images")
   (loop with tree = (build-tree images-and-hashes)
         for image-and-hash in images-and-hashes
-        for close = (items-in-ball tree image-and-hash
-                                   *threshold* #'hamming-distance
-                                   :key #'cdr)
+        for close = (vp:find tree (cdr image-and-hash)
+                             *threshold* #'hamming-distance
+                             :key #'cdr)
         when (> (length close) 1)
         collect (mapcar #'car close) into result
         finally (return (remove-duplicates
@@ -48,10 +48,10 @@ pictures are considered similar."
         with big-hashes = (collect-hashes big)
         with tree = (progn
                       (log:info "Searching for similar images")
-                      (make-vp-tree big-hashes #'hamming-distance :key #'cdr))
+                      (vp:make-vp-tree big-hashes #'hamming-distance :key #'cdr))
         for image-and-hash in little-hashes
-        for close = (items-in-ball tree image-and-hash
-                                   *threshold* #'hamming-distance
-                                   :key #'cdr)
+        for close = (vp:find tree (cdr image-and-hash)
+                             *threshold* #'hamming-distance
+                             :key #'cdr)
         when close
         collect (mapcar #'car (cons image-and-hash close))))

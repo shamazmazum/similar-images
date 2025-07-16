@@ -1,11 +1,11 @@
 (defpackage similar-images
   (:use #:cl
         #:perceptual-hashes
-        #:vp-trees
         #:fad
         #:sqlite
         #:lparallel
         #:snakes)
+  (:local-nicknames (#:vp #:vp-trees))
   (:shadowing-import-from
    #:snakes
    #:chain)
