@@ -13,7 +13,7 @@
 ("shamazmazum-vp-trees" .
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
-  :version "ultralisp-20241128044523"))
+  :version "ultralisp-20250716063000"))
 ("shamazmazum-perceptual-hashes" .
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
