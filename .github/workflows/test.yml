@@ -6,7 +6,7 @@ jobs:
   test_and_docs:
     runs-on: ubuntu-latest
     env:
-      LISP: sbcl/2.5.10
+      LISP: sbcl-bin/2.5.10
     steps:
       - name: Checkout
         uses: actions/checkout@v2
