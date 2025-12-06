@@ -31,19 +31,57 @@
       (error 'font-error :family family))
     (fd:file font)))
 
+(sera:-> imago-load-image (pathname)
+         (values sdl2-ffi:sdl-surface &optional))
+(defun imago-load-image (pathname)
+  (declare (optimize (speed 3)))
+  (let* ((image  (imago:read-image pathname))
+         (height (imago:image-height image))
+         (width  (imago:image-width  image))
+         (imgpix (imago:image-pixels image))
+         (surface (sdl2:create-rgb-surface width height 32))
+         (pixels  (sdl2:surface-pixels surface))
+         (pitch   (/ (sdl2:surface-pitch  surface) 4)))
+    (flet ((draw-color ()
+             (declare (type (simple-array imago:rgb-pixel 2) imgpix))
+             (loop for i below height
+                   for offset fixnum = (* i pitch) do
+                   (loop for j below width
+                         for pixel = (aref imgpix i j) do
+                         (setf (cffi:mem-aref pixels :uint32 (+ offset j))
+                               (sdl2:map-rgb
+                                (sdl2:surface-format surface)
+                                (imago:color-red   pixel)
+                                (imago:color-green pixel)
+                                (imago:color-blue  pixel))))))
+           (draw-gray ()
+             (declare (type (simple-array imago:grayscale-pixel 2) imgpix))
+             (loop for i below height
+                   for offset fixnum = (* i pitch) do
+                   (loop for j below width
+                         for pixel = (aref imgpix i j)
+                         for intensity = (imago:gray-intensity pixel) do
+                         (setf (cffi:mem-aref pixels :uint32 (+ offset j))
+                               (sdl2:map-rgb
+                                (sdl2:surface-format surface)
+                                intensity intensity intensity))))))
+      (if (typep image 'imago:grayscale-image)
+          (draw-gray) (draw-color)))
+    surface))
+
 (sera:-> load-image-with-fallback
          (pathname)
          (values sdl2-ffi:sdl-surface &optional))
 (defun load-image-with-fallback (pathname)
-  (restart-case
-      (sdl2-image:load-image (truename pathname))
-    (gray-square ()
-      :report "Create a red square instead of a picture"
+  (or (ignore-errors
+        (sdl2-image:load-image (truename pathname)))
+      (ignore-errors
+        (imago-load-image pathname))
       (let ((surface (sdl2:create-rgb-surface 600 600 32)))
         (sdl2:fill-rect surface nil
                         (sdl2:map-rgb
                          (sdl2:surface-format surface) 100 100 100))
-        surface))))
+        surface)))
 
 (sera:defconstructor image-info
   (label       string)
@@ -111,12 +149,6 @@
     (file-error ()
       (log:warn "Cannot remove ~a" filename))))
 
-(defun handle-conditions (c)
-  (declare (ignore c))
-  (when (find-restart 'gray-square)
-    (invoke-restart 'gray-square))
-  (continue))
-
 (defun view-images (filenames &optional base-directory)
   (multiple-value-bind (current next previous remove)
       (sera:deconstruct
@@ -130,12 +162,10 @@
           (sdl2:with-window (win :title "Viewer" :flags '(:shown))
             (sdl2:with-renderer (renderer win :flags '(:accelerated))
               (flet ((show-image (filename)
-                       (handler-bind
-                           (((or file-error sdl2-image:sdl-image-error) #'handle-conditions))
-                         (sdl2:set-render-draw-color renderer 0 0 0 255)
-                         (sdl2:render-clear renderer)
-                         (render-image renderer filename)
-                         (sdl2:render-present renderer))))
+                       (sdl2:set-render-draw-color renderer 0 0 0 255)
+                       (sdl2:render-clear renderer)
+                       (render-image renderer filename)
+                       (sdl2:render-present renderer)))
                 (sdl2:with-event-loop (:method :wait)
                   (:keydown
                    (:keysym keysym)

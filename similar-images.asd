@@ -21,6 +21,9 @@
   :depends-on (:cl-fad
                :log4cl
                :perceptual-hashes
+               :imago/jpeg-turbo
+               :imago/pngio
+               :imago/libheif
                :vp-trees
                :sqlite
                :lparallel
@@ -55,9 +58,7 @@
   :components ((:file "package")
                (:file "remover"))
   :depends-on (:similar-images
-               :serapeum
-               :imago/pngload
-               :imago/jpeg-turbo))
+               :serapeum))
 
 (defsystem :similar-images/misc
   :name :similar-images/misc

@@ -19,7 +19,7 @@
   (declare (type (or pathname string) pathname))
   (if (find (pathname-type (pathname pathname))
             *image-types*
-            :test #'string=)
+            :test #'string-equal)
       pathname))
 
 (defgenerator collect-images (directory)

@@ -9,7 +9,7 @@
 (defparameter *recursive* t
   "Do recursive scan for images if T")
 
-(defparameter *image-types* '("jpg" "jpeg" "png")
+(defparameter *image-types* '("jpg" "jpeg" "png" "heic")
   "Image file extensions")
 
 (defparameter *use-sqlite* t
