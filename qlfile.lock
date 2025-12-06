@@ -38,10 +38,6 @@
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
   :version "ultralisp-20241128044523"))
-("Shinmera-font-discovery" .
- (:class qlot/source/ultralisp:source-ultralisp
-  :initargs (:%version :latest)
-  :version "ultralisp-20241128044523"))
 ("split-sequence" .
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
@@ -58,3 +54,15 @@
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
   :version "ultralisp-20241204090500"))
+("imago" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "tokenrove/imago" :ref "ad98d0d" :branch nil :tag nil)
+  :version "github-ad98d0d"))
+("font-discovery" .
+ (:class qlot/source/ql:source-ql
+  :initargs (:%version :latest)
+  :version "ql-2025-06-22"))
+("shamazmazum-cl-libheif" .
+ (:class qlot/source/ultralisp:source-ultralisp
+  :initargs (:%version :latest)
+  :version "ultralisp-20251206155500"))

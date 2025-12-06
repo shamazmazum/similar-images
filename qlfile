@@ -7,8 +7,10 @@ ql lparallel
 ql serapeum
 ultralisp lispgames-cl-sdl2
 ultralisp lispgames-cl-sdl2-image
-ultralisp Shinmera-font-discovery
 ql split-sequence
 ql cl-sdl2-ttf
 ultralisp BnMcGn-snakes
 ultralisp shamazmazum-command-line-parse
+github tokenrove/imago :ref ad98d0d
+ql font-discovery
+ultralisp shamazmazum-cl-libheif
