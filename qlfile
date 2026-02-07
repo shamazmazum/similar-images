@@ -13,4 +13,4 @@ ultralisp BnMcGn-snakes
 ultralisp shamazmazum-command-line-parse
 github tokenrove/imago :ref ad98d0d
 ql font-discovery
-ultralisp shamazmazum-cl-libheif
+github shamazmazum/cl-libheif :tag v1.0.1
