@@ -36,7 +36,7 @@
     (option :hash "HASH"
             :short       #\h
             :long        "hash"
-            :description "Hash function to use (can be ahash, dhash or phash)"
+            :description "Hash function to use (can be ahash or dhash)"
             :fn (lambda (hash)
                   (intern
                    (string-upcase hash)

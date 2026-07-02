@@ -14,6 +14,10 @@
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
   :version "ultralisp-20250716063000"))
+("shamazmazum-perceptual-hashes" .
+ (:class qlot/source/ultralisp:source-ultralisp
+  :initargs (:%version :latest)
+  :version "ultralisp-20241128044523"))
 ("cl-sqlite" .
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
@@ -62,11 +66,3 @@
  (:class qlot/source/github:source-github
   :initargs (:repos "shamazmazum/cl-libheif" :ref nil :branch nil :tag "v1.0.1")
   :version "github-6587cf1ca06996e29efa29afff068e670e351c46"))
-("cl-fftw" .
- (:class qlot/source/github:source-github
-  :initargs (:repos "shamazmazum/cl-fftw" :ref nil :branch nil :tag "v0.2")
-  :version "github-779ee0f5141c4a0dd43c12419ec90592743cffa4"))
-("perceptual-hashes" .
- (:class qlot/source/github:source-github
-  :initargs (:repos "shamazmazum/perceptual-hashes" :ref nil :branch nil :tag "v0.4.0")
-  :version "github-7e85ad5019ac102cefa9e9091416991f794b8a35"))
