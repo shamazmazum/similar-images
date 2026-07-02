@@ -25,10 +25,10 @@ the images are considered similar.")
 (defparameter *workers* 6
   "Default number of workers for calculation of hashes")
 
-(deftype perceptual-hash () '(member :ahash :dhash))
+(deftype perceptual-hash () '(member :ahash :dhash :phash))
 (declaim (type perceptual-hash *hash-function*))
 (defparameter *hash-function* :ahash
-  "Perceptual hash function to use by default (:ahash or :dhash)")
+  "Perceptual hash function to use by default (:ahash, :dhash or :phash)")
 
 (defmacro define-search-function (name arguments doc &body body)
   "Define search function which does all necessary bindings"

@@ -8,8 +8,9 @@
     (restart-case
         (funcall (ecase *hash-function*
                    (:ahash #'ahash)
-                   (:dhash #'dhash))
-                 image)
+                   (:dhash #'dhash)
+                   (:phash #'phash))
+                 (imago:read-image image))
       (skip-image ()
         :report "Skip this image and continue"
         (values))
