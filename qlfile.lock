@@ -54,10 +54,6 @@
  (:class qlot/source/github:source-github
   :initargs (:repos "tokenrove/imago" :ref "ad98d0d" :branch nil :tag nil)
   :version "github-ad98d0d"))
-("font-discovery" .
- (:class qlot/source/ql:source-ql
-  :initargs (:%version :latest)
-  :version "ql-2025-06-22"))
 ("cl-libheif" .
  (:class qlot/source/github:source-github
   :initargs (:repos "shamazmazum/cl-libheif" :ref nil :branch nil :tag "v1.0.1")
@@ -66,3 +62,7 @@
  (:class qlot/source/github:source-github
   :initargs (:repos "shamazmazum/perceptual-hashes" :ref nil :branch nil :tag nil)
   :version "github-d485d33360b44ac35e36135510cff75c56c8adde"))
+("font-discovery" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "Shinmera/font-discovery" :ref "5101ca7" :branch nil :tag nil)
+  :version "github-5101ca7"))

@@ -11,6 +11,6 @@ ql cl-sdl2-ttf
 ultralisp BnMcGn-snakes
 ultralisp shamazmazum-command-line-parse
 github tokenrove/imago :ref ad98d0d
-ql font-discovery
 github shamazmazum/cl-libheif :tag v1.0.1
 github shamazmazum/perceptual-hashes
+github Shinmera/font-discovery :ref 5101ca7
