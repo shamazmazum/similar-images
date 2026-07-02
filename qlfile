@@ -1,7 +1,6 @@
 ql cl-fad
 ultralisp sharplispers-log4cl
 ultralisp shamazmazum-vp-trees
-ultralisp shamazmazum-perceptual-hashes
 ql cl-sqlite
 ql lparallel
 ql serapeum
@@ -14,3 +13,4 @@ ultralisp shamazmazum-command-line-parse
 github tokenrove/imago :ref ad98d0d
 ql font-discovery
 github shamazmazum/cl-libheif :tag v1.0.1
+github shamazmazum/perceptual-hashes

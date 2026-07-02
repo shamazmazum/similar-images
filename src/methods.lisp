@@ -9,7 +9,7 @@
         (funcall (ecase *hash-function*
                    (:ahash #'ahash)
                    (:dhash #'dhash))
-                 image)
+                 (imago:read-image image))
       (skip-image ()
         :report "Skip this image and continue"
         (values))
