@@ -21,8 +21,8 @@
   :depends-on (:cl-fad
                :log4cl
                :perceptual-hashes
+               :imago
                :imago/jpeg-turbo
-               :imago/pngio
                :imago/libheif
                :vp-trees
                :sqlite

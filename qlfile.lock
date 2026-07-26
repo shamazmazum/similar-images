@@ -50,10 +50,6 @@
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
   :version "ultralisp-20241204090500"))
-("imago" .
- (:class qlot/source/github:source-github
-  :initargs (:repos "tokenrove/imago" :ref "ad98d0d" :branch nil :tag nil)
-  :version "github-ad98d0d"))
 ("cl-libheif" .
  (:class qlot/source/github:source-github
   :initargs (:repos "shamazmazum/cl-libheif" :ref nil :branch nil :tag "v1.0.1")
@@ -66,3 +62,7 @@
  (:class qlot/source/github:source-github
   :initargs (:repos "Shinmera/font-discovery" :ref "5101ca7" :branch nil :tag nil)
   :version "github-5101ca7"))
+("imago" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "tokenrove/imago" :ref nil :branch nil :tag nil)
+  :version "github-a5c3e314cb0062c4b2f2dd3540cb1efd206c5aca"))
