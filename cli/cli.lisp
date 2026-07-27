@@ -94,6 +94,8 @@
   (prune-database (%assoc :directory args)))
 
 (defun process (args)
+  ;; Disable multithreaded decoding in libheif
+  (setq imago/libheif:*heic-threads* 0)
   (let* ((big-set    (%assoc :big-set    args))
          (exhaustive (%assoc :exhaustive args))
          (key-args (list :threshold       (%assoc :threshold      args *threshold*)
@@ -114,7 +116,8 @@
              (apply #'find-similar set key-args))
             (t
              (apply #'find-similar-prob set key-args)))))
-
+    ;; Re-enable multithreaded decoding in libheif
+    (setq imago/libheif:*heic-threads* nil)
     (case (%assoc :mode args)
       (:print
        (format t "~a~%" similar))
