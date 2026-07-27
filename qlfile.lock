@@ -50,10 +50,6 @@
  (:class qlot/source/ultralisp:source-ultralisp
   :initargs (:%version :latest)
   :version "ultralisp-20241204090500"))
-("cl-libheif" .
- (:class qlot/source/github:source-github
-  :initargs (:repos "shamazmazum/cl-libheif" :ref nil :branch nil :tag "v1.0.1")
-  :version "github-6587cf1ca06996e29efa29afff068e670e351c46"))
 ("perceptual-hashes" .
  (:class qlot/source/github:source-github
   :initargs (:repos "shamazmazum/perceptual-hashes" :ref nil :branch nil :tag nil)
@@ -65,4 +61,8 @@
 ("imago" .
  (:class qlot/source/github:source-github
   :initargs (:repos "tokenrove/imago" :ref nil :branch nil :tag nil)
-  :version "github-a5c3e314cb0062c4b2f2dd3540cb1efd206c5aca"))
+  :version "github-974833cba10e5506bb8e599f5344355eba1f6826"))
+("cl-libheif" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "shamazmazum/cl-libheif" :ref nil :branch nil :tag "v1.1.0")
+  :version "github-3f74c17b7313eeb179eefe87ffd00bcf54a53751"))
